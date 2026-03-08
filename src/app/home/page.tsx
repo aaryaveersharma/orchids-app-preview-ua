@@ -22,7 +22,7 @@ export default function HomePage() {
   const { user, isLoading, isAdmin, updateAddress } = useAuth();
   const router = useRouter();
   const [showAddressForm, setShowAddressForm] = useState(false);
-  const { getPrice } = useLivePrices();
+  const { getPrice, loaded: pricesLoaded } = useLivePrices();
 
     useEffect(() => {
       if (!isLoading && !user) {
@@ -242,7 +242,7 @@ export default function HomePage() {
                   <h3 className="font-semibold text-gray-900 text-sm">{service.name}</h3>
                   <p className="text-xs text-gray-500 line-clamp-1">{service.subtitle}</p>
                     <p className="text-xs font-bold text-primary mt-0.5">
-                        {(() => { const p = getPrice(service.id, service.price); if (p === null) return '...'; return p > 0 ? `₹${p.toLocaleString('en-IN')}` : service.priceLabel || 'Get Quote'; })()}
+                        {!pricesLoaded ? '...' : (() => { const p = getPrice(service.id, service.price); return p > 0 ? `₹${p.toLocaleString('en-IN')}` : service.priceLabel || 'Get Quote'; })()}
                       </p>
                 </div>
               <ChevronRight className="w-5 h-5 text-gray-400" />

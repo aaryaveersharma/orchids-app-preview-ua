@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+
 export interface Service {
   id: string;
   name: string;
@@ -151,29 +154,28 @@ export const getServiceById = (id: string) => {
   return services.find(service => service.id === id);
 };
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-
 let cachedPrices: Record<string, number> | null = null;
-let fetchPromise: Promise<void> | null = null;
+let fetchPromise: Promise<Record<string, number>> | null = null;
 
-function ensurePricesFetched(): Promise<void> {
-  if (!fetchPromise) {
-    fetchPromise = supabase
-      .from('service_prices')
-      .select('service_id, price_hatchback')
-      .then(({ data }) => {
+async function fetchAllPrices(): Promise<Record<string, number>> {
+    try {
+        const { data, error } = await supabase
+            .from('service_prices')
+            .select('service_id, price_hatchback');
+
+        if (error) throw error;
+
+        const map: Record<string, number> = {};
         if (data) {
-          const map: Record<string, number> = {};
-          data.forEach((row: any) => { map[row.service_id] = Number(row.price_hatchback) || 0; });
-          cachedPrices = map;
+            data.forEach((row: any) => { map[row.service_id] = Number(row.price_hatchback) || 0; });
         }
-      }) as unknown as Promise<void>;
-  }
-  return fetchPromise!;
+        cachedPrices = map;
+        return map;
+    } catch (err) {
+        console.error('Failed to fetch live prices', err);
+        return {};
+    }
 }
-
-ensurePricesFetched();
 
 export function useLivePrices() {
   const [prices, setPrices] = useState<Record<string, number>>(cachedPrices || {});
@@ -185,11 +187,14 @@ export function useLivePrices() {
       setLoaded(true);
       return;
     }
-    ensurePricesFetched().then(() => {
-      if (cachedPrices) {
-        setPrices(cachedPrices);
+
+    if (!fetchPromise) {
+        fetchPromise = fetchAllPrices();
+    }
+
+    fetchPromise.then(res => {
+        setPrices(res);
         setLoaded(true);
-      }
     });
   }, []);
 

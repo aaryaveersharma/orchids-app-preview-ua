@@ -17,7 +17,7 @@ function ServicesContent() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     searchParams.get('category')
   );
-  const { getPrice } = useLivePrices();
+  const { getPrice, loaded: pricesLoaded } = useLivePrices();
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -128,7 +128,7 @@ function ServicesContent() {
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-primary">
-                              {(() => { const p = getPrice(service.id, service.price); if (p === null) return '...'; return p > 0 ? `₹${p.toLocaleString('en-IN')}` : service.priceLabel || 'Get Quote'; })()}
+                              {!pricesLoaded ? '...' : (() => { const p = getPrice(service.id, service.price); return p > 0 ? `₹${p.toLocaleString('en-IN')}` : service.priceLabel || 'Get Quote'; })()}
                             </span>
                           <ChevronRight className="w-5 h-5 text-gray-400" />
                         </div>
