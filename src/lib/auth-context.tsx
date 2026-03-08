@@ -512,9 +512,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
           let bookingDateISO = new Date().toISOString();
           if (bookingData.preferredDateTime) {
-            const [d, t] = bookingData.preferredDateTime.split(' ');
-            if (d && t) {
-              try { bookingDateISO = new Date(`${d}T${t}`).toISOString(); } catch {}
+            const parts = bookingData.preferredDateTime.split(' ');
+            const d = parts[0];
+            if (d) {
+              try { bookingDateISO = new Date(d).toISOString(); } catch {}
             }
           }
 
@@ -608,15 +609,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const rescheduleBooking = useCallback(async (bookingId: string, newDateTime: string) => {
     try {
-      const [d, t] = newDateTime.split(' ');
+      const parts = newDateTime.split(' ');
+      const d = parts[0];
+      const t = parts.slice(1).join(' '); // Handle '09:00 am'
+
       let bookingDateISO = new Date().toISOString();
       if (d && t) {
-        bookingDateISO = new Date(`${d}T${t}`).toISOString();
+        // Try to parse YYYY-MM-DD for booking_date
+        try { bookingDateISO = new Date(d).toISOString(); } catch {}
       }
 
       const { error } = await supabase
           .from('bookings')
-          .update({ preferred_date_time: newDateTime, booking_date: bookingDateISO, status: 'Rescheduled', rescheduled_by: 'user' })
+          .update({
+            preferred_date_time: newDateTime,
+            preferred_time: t,
+            booking_date: bookingDateISO,
+            status: 'Rescheduled',
+            rescheduled_by: 'user'
+          })
           .eq('id', bookingId);
 
         if (error) throw error;

@@ -282,10 +282,15 @@ export async function POST(request: Request) {
     }
 
     if (action === 'reschedule-booking') {
-      const { bookingId, dateTime } = body;
+      const { bookingId, dateTime, preferredTime } = body;
       const { error } = await adminClient
         .from('bookings')
-        .update({ status: 'Rescheduled', preferred_date_time: dateTime, rescheduled_by: 'admin' })
+        .update({
+          status: 'Rescheduled',
+          preferred_date_time: dateTime,
+          preferred_time: preferredTime,
+          rescheduled_by: 'admin'
+        })
         .eq('id', bookingId);
       if (error) return NextResponse.json({ error: error.message }, { status: 400 });
       return NextResponse.json({ success: true });

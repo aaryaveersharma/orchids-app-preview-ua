@@ -265,15 +265,26 @@ export default function AdminPanel() {
   const rescheduleBooking = async (id: string) => {
     if (!rescheduleDate || !rescheduleTime) { toast.error('Please select both date and time'); return; }
     setRescheduleLoading(true);
-    const dateObj = new Date(`${rescheduleDate}T${rescheduleTime}`);
-    const formatted = dateObj.toLocaleString('en-IN', {
-      weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
-      hour: 'numeric', minute: '2-digit', hour12: true,
-    });
+
+    // Format: HH:mm am/pm
+    const [hours, minutes] = rescheduleTime.split(':');
+    const h = parseInt(hours);
+    const ampm = h >= 12 ? 'pm' : 'am';
+    const h12 = h % 12 || 12;
+    const formattedTime = `${h12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+    // Consistent format: YYYY-MM-DD HH:mm am/pm
+    const formattedDateTime = `${rescheduleDate} ${formattedTime}`;
+
     try {
-      await adminAction({ action: 'reschedule-booking', bookingId: id, dateTime: formatted });
+      await adminAction({
+        action: 'reschedule-booking',
+        bookingId: id,
+        dateTime: formattedDateTime,
+        preferredTime: formattedTime
+      });
       toast.success('Booking rescheduled');
-      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'Rescheduled', preferred_date_time: formatted, rescheduled_by: 'admin' } : b));
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'Rescheduled', preferred_date_time: formattedDateTime, rescheduled_by: 'admin' } : b));
       setRescheduleId(null);
       setRescheduleDate('');
       setRescheduleTime('');

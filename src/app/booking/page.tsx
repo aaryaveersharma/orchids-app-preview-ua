@@ -17,6 +17,11 @@ function BookingContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const serviceId = searchParams.get('service');
+
+    // Get current date in IST (Raipur)
+    const getISTDate = () => {
+      return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    };
     
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
     const [showServiceList, setShowServiceList] = useState(false);
@@ -24,7 +29,7 @@ function BookingContent() {
     const [vehicleNumber, setVehicleNumber] = useState(user?.vehicleNumber || '');
     const [vehicleMakeModel, setVehicleMakeModel] = useState(user?.vehicleMakeModel || '');
     const [serviceMode, setServiceMode] = useState<'Home Service' | 'Pickup & Drop'>('Pickup & Drop');
-    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+    const [date, setDate] = useState(getISTDate());
     const [time, setTime] = useState('');
     const [notes, setNotes] = useState('');
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -42,8 +47,18 @@ function BookingContent() {
           if (data.vehicleNumber) setVehicleNumber(data.vehicleNumber);
           if (data.vehicleMakeModel) setVehicleMakeModel(data.vehicleMakeModel);
           if (data.serviceMode) setServiceMode(data.serviceMode);
-          if (data.date) setDate(data.date);
-          if (data.time) setTime(data.time);
+
+          // Only use drafted date if it's today or in the future
+          const today = getISTDate();
+          if (data.date && data.date >= today) {
+            setDate(data.date);
+            if (data.time) setTime(data.time);
+          } else {
+            // If drafting an old date, reset to today and clear time
+            setDate(today);
+            setTime('');
+          }
+
           if (data.notes) setNotes(data.notes);
         } catch (e) {
           console.error('Failed to parse booking draft', e);
@@ -135,38 +150,49 @@ function BookingContent() {
       }
     }, [canHomeService, serviceMode]);
 
-    useEffect(() => {
+    const fetchOccupiedSlots = useCallback(async () => {
       if (!date) {
         setOccupiedSlots([]);
         return;
       }
+      setLoadingSlots(true);
+      try {
+        // Query bookings where preferred_date_time starts with selected date (YYYY-MM-DD)
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('preferred_time')
+          .in('status', ['Confirmed', 'Rescheduled', 'Completed'])
+          .like('preferred_date_time', `${date}%`);
 
-      const fetchOccupiedSlots = async () => {
-        setLoadingSlots(true);
-        try {
-          const startOfDay = new Date(date);
-          startOfDay.setHours(0, 0, 0, 0);
-          const endOfDay = new Date(date);
-          endOfDay.setHours(23, 59, 59, 999);
-
-          const { data, error } = await supabase
-            .from('bookings')
-            .select('preferred_time')
-            .in('status', ['Confirmed', 'Rescheduled', 'Completed'])
-            .gte('booking_date', startOfDay.toISOString())
-            .lte('booking_date', endOfDay.toISOString());
-
-          if (!error && data) {
-            setOccupiedSlots(data.map(b => b.preferred_time).filter(Boolean));
-          }
-        } catch {
-        } finally {
-          setLoadingSlots(false);
+        if (!error && data) {
+          const slots = data.map(b => b.preferred_time).filter(Boolean);
+          setOccupiedSlots(slots);
         }
-      };
-
-      fetchOccupiedSlots();
+      } catch {
+      } finally {
+        setLoadingSlots(false);
+      }
     }, [date]);
+
+    useEffect(() => {
+      fetchOccupiedSlots();
+
+      // Real-time subscription to update slots if someone else books
+      const channel = supabase
+        .channel('booking-slots-updates')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'bookings' },
+          () => {
+            fetchOccupiedSlots();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, [date, fetchOccupiedSlots]);
 
   const mainServiceId = serviceId || selectedServices[0];
   const mainService = services.find(s => s.id === mainServiceId);
@@ -445,7 +471,7 @@ function BookingContent() {
             <input
               type="date"
               value={date}
-              min={new Date().toISOString().split('T')[0]}
+              min={getISTDate()}
               onChange={(e) => {
                 setDate(e.target.value);
                 setTime(''); // Reset time when date changes

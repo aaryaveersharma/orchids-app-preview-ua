@@ -19,7 +19,14 @@ function RescheduleModal({ booking, onClose }: { booking: Booking; onClose: () =
       return;
     }
     setLoading(true);
-    const result = await rescheduleBooking(booking.id, `${date} ${time}`);
+    // Format: HH:mm am/pm
+    const [hours, minutes] = time.split(':');
+    const h = parseInt(hours);
+    const ampm = h >= 12 ? 'pm' : 'am';
+    const h12 = h % 12 || 12;
+    const formattedTime = `${h12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+    const result = await rescheduleBooking(booking.id, `${date} ${formattedTime}`);
     if (result.success) {
       toast.success('Booking rescheduled successfully');
       onClose();
