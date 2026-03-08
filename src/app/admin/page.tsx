@@ -102,7 +102,7 @@ export default function AdminPanel() {
   const [loadingServices, setLoadingServices] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'Pending' | 'Confirmed' | 'Completed' | 'Rescheduled' | 'Cancelled'>('all');
+  const [filter, setFilter] = useState<'all' | 'Confirmed' | 'Completed' | 'Rescheduled' | 'Cancelled'>('all');
   const [showPinModal, setShowPinModal] = useState(false);
   const [newPin, setNewPin] = useState('');
   const [confirmNewPin, setConfirmNewPin] = useState('');
@@ -409,7 +409,6 @@ export default function AdminPanel() {
 
   const stats = {
     total: bookings.length,
-    pending: bookings.filter(b => b.status === 'Pending').length,
     confirmed: bookings.filter(b => b.status === 'Confirmed').length,
     completed: bookings.filter(b => b.status === 'Completed').length,
     rescheduled: bookings.filter(b => b.status === 'Rescheduled').length,
@@ -500,10 +499,6 @@ export default function AdminPanel() {
             <button onClick={() => setFilter('all')} className={`p-2 rounded-xl text-center transition-all ${filter === 'all' ? 'bg-primary text-white shadow-md' : 'bg-white text-gray-700 shadow-sm'}`}>
               <p className="text-base font-bold">{stats.total}</p>
               <p className="text-[8px] font-medium">All</p>
-            </button>
-            <button onClick={() => setFilter('Pending')} className={`p-2 rounded-xl text-center transition-all ${filter === 'Pending' ? 'bg-yellow-500 text-white shadow-md' : 'bg-white text-gray-700 shadow-sm'}`}>
-              <p className="text-base font-bold">{stats.pending}</p>
-              <p className="text-[8px] font-medium">Pending</p>
             </button>
             <button onClick={() => setFilter('Rescheduled')} className={`p-2 rounded-xl text-center transition-all ${filter === 'Rescheduled' ? 'bg-orange-500 text-white shadow-md' : 'bg-white text-gray-700 shadow-sm'}`}>
               <p className="text-base font-bold">{stats.rescheduled}</p>
@@ -639,7 +634,7 @@ export default function AdminPanel() {
                           <p className="text-[10px] text-gray-400">Booked: {new Date(booking.created_at).toLocaleString()}</p>
 
                           <div className="flex gap-2 pt-2">
-                            {(booking.status === 'Pending' || booking.status === 'Rescheduled') && (
+                            {(booking.status === 'Rescheduled') && (
                               <button onClick={(e) => { e.stopPropagation(); updateBookingStatus(booking.id, 'Confirmed'); }} disabled={confirmingId === booking.id} className="flex-1 py-2.5 bg-green-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-green-700 transition-colors disabled:opacity-60">
                                 {confirmingId === booking.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                                 Confirm

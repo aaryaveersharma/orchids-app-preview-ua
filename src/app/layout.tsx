@@ -30,8 +30,13 @@ export const metadata: Metadata = {
   },
   applicationName: "Urban Auto",
   icons: {
-    icon: "/urban-auto-logo.jpg",
+    icon: [
+      { url: "/urban-auto-logo.jpg", sizes: "32x32" },
+      { url: "/urban-auto-logo.jpg", sizes: "16x16" },
+      { url: "/urban-auto-logo.jpg" },
+    ],
     apple: "/urban-auto-logo.jpg",
+    shortcut: "/urban-auto-logo.jpg",
   },
     other: {
       "msapplication-TileColor": "#1e3a8a",

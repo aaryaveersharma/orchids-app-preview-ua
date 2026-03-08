@@ -110,7 +110,6 @@ function BookingItem({ booking, onCancel, onReschedule }: {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Pending': return 'bg-yellow-100 text-yellow-700';
       case 'Confirmed': return 'bg-green-100 text-green-700';
       case 'Completed': return 'bg-blue-100 text-blue-700';
       case 'Rescheduled': return 'bg-orange-100 text-orange-700';
@@ -186,7 +185,7 @@ function BookingItem({ booking, onCancel, onReschedule }: {
         </div>
       )}
 
-      {!canReschedule && (booking.status === 'Pending' || booking.status === 'Confirmed') && (
+      {!canReschedule && (booking.status === 'Confirmed') && (
         <button
           onClick={() => onCancel(booking.id)}
           className="mt-4 w-full py-2.5 border border-red-100 text-red-500 rounded-xl text-xs font-bold hover:bg-red-50 transition-colors"

@@ -24,7 +24,7 @@ function BookingContent() {
     const [vehicleNumber, setVehicleNumber] = useState(user?.vehicleNumber || '');
     const [vehicleMakeModel, setVehicleMakeModel] = useState(user?.vehicleMakeModel || '');
     const [serviceMode, setServiceMode] = useState<'Home Service' | 'Pickup & Drop'>('Pickup & Drop');
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [time, setTime] = useState('');
     const [notes, setNotes] = useState('');
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -152,7 +152,7 @@ function BookingContent() {
           const { data, error } = await supabase
             .from('bookings')
             .select('preferred_time')
-            .eq('status', 'Confirmed') // Or other active statuses
+            .in('status', ['Confirmed', 'Rescheduled', 'Completed'])
             .gte('booking_date', startOfDay.toISOString())
             .lte('booking_date', endOfDay.toISOString());
 
