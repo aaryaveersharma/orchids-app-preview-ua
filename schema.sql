@@ -106,5 +106,6 @@ CREATE TABLE IF NOT EXISTS public.app_config (
 INSERT INTO public.app_config (key, value)
 VALUES
 ('signup_carousel', '{"images": []}'),
-('payment_config', '{"upi_id": "", "qr_code_url": ""}')
+('payment_config', '{"upi_id": "", "qr_code_url": ""}'),
+('booking_slots', '{"slots": ["09:00 am", "10:30 am", "12:00 pm", "01:30 pm", "03:00 pm", "04:30 pm", "06:00 pm"]}')
 ON CONFLICT (key) DO NOTHING;

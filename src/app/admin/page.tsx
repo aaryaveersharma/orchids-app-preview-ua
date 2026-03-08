@@ -3,7 +3,7 @@
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { LogOut, Check, RefreshCw, ChevronDown, ChevronUp, User, Phone, Mail, MapPin, Car, FileText, Calendar, Loader2, Copy, Users, CalendarDays, KeyRound, Eye, EyeOff, X, ShieldCheck, IndianRupee, Wrench, AlertTriangle, Truck, Home, Search, Ticket, Plus, Trash2, ToggleLeft, ToggleRight, ChevronRight, Bell, Settings, Image as ImageIcon, QrCode, MessageSquare, Upload } from 'lucide-react';
+import { LogOut, Check, RefreshCw, ChevronDown, ChevronUp, User, Phone, Mail, MapPin, Car, FileText, Calendar, Loader2, Copy, Users, CalendarDays, KeyRound, Eye, EyeOff, X, ShieldCheck, IndianRupee, Wrench, AlertTriangle, Truck, Home, Search, Ticket, Plus, Trash2, ToggleLeft, ToggleRight, ChevronRight, Bell, Settings, Image as ImageIcon, QrCode, MessageSquare, Upload, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -131,9 +131,11 @@ export default function AdminPanel() {
 
   const [showCarouselModal, setShowCarouselModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showSlotsModal, setShowSlotsModal] = useState(false);
   const [configLoading, setConfigLoading] = useState(false);
   const [appConfig, setAppConfig] = useState<any>({});
   const [newCarouselUrl, setNewCarouselUrl] = useState('');
+  const [newSlotTime, setNewSlotTime] = useState('');
   const [upiId, setUpiId] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -168,8 +170,8 @@ export default function AdminPanel() {
   }, []);
 
   useEffect(() => {
-    if (isAdmin && (showCarouselModal || showPaymentModal)) fetchConfig();
-  }, [isAdmin, showCarouselModal, showPaymentModal, fetchConfig]);
+    if (isAdmin && (showCarouselModal || showPaymentModal || showSlotsModal)) fetchConfig();
+  }, [isAdmin, showCarouselModal, showPaymentModal, showSlotsModal, fetchConfig]);
 
   useEffect(() => {
     if (!isLoading && !loggingOut && (!user || !isAdmin)) {
@@ -445,6 +447,9 @@ export default function AdminPanel() {
             </button>
             <button onClick={() => setShowCarouselModal(true)} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors" title="Signup Carousel">
               <ImageIcon className="w-5 h-5" />
+            </button>
+            <button onClick={() => setShowSlotsModal(true)} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors" title="Booking Slots">
+              <Clock className="w-5 h-5" />
             </button>
             <button onClick={() => setShowPaymentModal(true)} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors" title="Payment Details">
               <QrCode className="w-5 h-5" />
@@ -1072,6 +1077,97 @@ export default function AdminPanel() {
       </AnimatePresence>
 
       <AnimatePresence>
+        {showSlotsModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto" onClick={() => setShowSlotsModal(false)}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-2xl p-6 w-full max-w-md my-8" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Booking Time Slots</h3>
+                <button onClick={() => setShowSlotsModal(false)} className="p-1"><X className="w-5 h-5 text-gray-400" /></button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <input
+                    type="time"
+                    value={newSlotTime}
+                    onChange={(e) => setNewSlotTime(e.target.value)}
+                    className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none"
+                  />
+                  <button
+                    onClick={async () => {
+                      if (!newSlotTime) return;
+                      // Convert HH:MM to HH:MM am/pm
+                      const [hours, minutes] = newSlotTime.split(':');
+                      const h = parseInt(hours);
+                      const ampm = h >= 12 ? 'pm' : 'am';
+                      const h12 = h % 12 || 12;
+                      const formattedTime = `${h12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+                      setUploading(true);
+                      try {
+                        const current = appConfig.booking_slots?.slots || [];
+                        if (current.includes(formattedTime)) {
+                          toast.error('Slot already exists');
+                          return;
+                        }
+                        const updated = [...current, formattedTime].sort((a, b) => {
+                          const getTime = (t: string) => {
+                            const [time, period] = t.split(' ');
+                            let [h, m] = time.split(':').map(Number);
+                            if (period === 'pm' && h !== 12) h += 12;
+                            if (period === 'am' && h === 12) h = 0;
+                            return h * 60 + m;
+                          };
+                          return getTime(a) - getTime(b);
+                        });
+                        await adminAction({ action: 'update-app-config', key: 'booking_slots', value: { slots: updated } });
+                        setNewSlotTime('');
+                        fetchConfig();
+                        toast.success('Slot added');
+                      } catch (err: any) {
+                        toast.error(err.message || 'Failed to add slot');
+                      } finally {
+                        setUploading(false);
+                      }
+                    }}
+                    disabled={uploading}
+                    className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold disabled:opacity-60 flex items-center gap-2"
+                  >
+                    {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                    Add Slot
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs font-bold text-gray-500 uppercase">Existing Slots</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(appConfig.booking_slots?.slots || []).map((slot: string, i: number) => (
+                      <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100 group">
+                        <span className="text-sm font-semibold text-gray-700">{slot}</span>
+                        <button
+                          onClick={async () => {
+                            if (!confirm('Delete this slot?')) return;
+                            const updated = (appConfig.booking_slots.slots as string[]).filter((_, idx) => idx !== i);
+                            await adminAction({ action: 'update-app-config', key: 'booking_slots', value: { slots: updated } });
+                            fetchConfig();
+                            toast.success('Slot deleted');
+                          }}
+                          className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  {(!appConfig.booking_slots?.slots || appConfig.booking_slots.slots.length === 0) && (
+                    <p className="text-center py-8 text-sm text-gray-400">No time slots configured</p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
         {showPaymentModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto" onClick={() => setShowPaymentModal(false)}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-2xl p-6 w-full max-w-md my-8" onClick={(e) => e.stopPropagation()}>

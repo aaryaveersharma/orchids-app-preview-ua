@@ -516,6 +516,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 service_mode: bookingData.serviceMode || 'Pickup & Drop',
                 address: bookingAddress,
                 preferred_date_time: bookingData.preferredDateTime || bookingDateISO,
+                preferred_time: bookingData.time || '',
                 booking_date: bookingDateISO,
                 notes: bookingData.notes || '',
                 status: 'Pending',

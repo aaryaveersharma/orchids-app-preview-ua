@@ -27,6 +27,9 @@ function BookingContent() {
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [notes, setNotes] = useState('');
+    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+    const [occupiedSlots, setOccupiedSlots] = useState<string[]>([]);
+    const [loadingSlots, setLoadingSlots] = useState(false);
 
     // Draft persistence
     useEffect(() => {
@@ -75,6 +78,16 @@ function BookingContent() {
     }, [isLoading, user, router]);
 
     useEffect(() => {
+      const fetchConfig = async () => {
+        try {
+          const { data, error } = await supabase.from('app_config').select('*').eq('key', 'booking_slots').single();
+          if (!error && data?.value?.slots) {
+            setAvailableSlots(data.value.slots);
+          }
+        } catch {}
+      };
+      fetchConfig();
+
       let retries = 0;
       const fetchPrices = async () => {
         try {
@@ -121,6 +134,39 @@ function BookingContent() {
         setServiceMode('Pickup & Drop');
       }
     }, [canHomeService, serviceMode]);
+
+    useEffect(() => {
+      if (!date) {
+        setOccupiedSlots([]);
+        return;
+      }
+
+      const fetchOccupiedSlots = async () => {
+        setLoadingSlots(true);
+        try {
+          const startOfDay = new Date(date);
+          startOfDay.setHours(0, 0, 0, 0);
+          const endOfDay = new Date(date);
+          endOfDay.setHours(23, 59, 59, 999);
+
+          const { data, error } = await supabase
+            .from('bookings')
+            .select('preferred_time')
+            .eq('status', 'Confirmed') // Or other active statuses
+            .gte('booking_date', startOfDay.toISOString())
+            .lte('booking_date', endOfDay.toISOString());
+
+          if (!error && data) {
+            setOccupiedSlots(data.map(b => b.preferred_time).filter(Boolean));
+          }
+        } catch {
+        } finally {
+          setLoadingSlots(false);
+        }
+      };
+
+      fetchOccupiedSlots();
+    }, [date]);
 
   const mainServiceId = serviceId || selectedServices[0];
   const mainService = services.find(s => s.id === mainServiceId);
@@ -393,29 +439,86 @@ function BookingContent() {
               <Calendar className="w-4 h-4 text-primary" />
             Schedule Service
           </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-600 mb-1.5 block">Date *</label>
-              <input
-                type="date"
-                value={date}
-                min={new Date().toISOString().split('T')[0]}
-                onChange={(e) => setDate(e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border ${errors.date ? 'border-red-400' : 'border-gray-200'} bg-gray-50 text-sm outline-none`}
-              />
-              {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
-            </div>
-            <div>
-              <label className="text-sm text-gray-600 mb-1.5 block">Time *</label>
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className={`w-full px-4 py-3 rounded-xl border ${errors.time ? 'border-red-400' : 'border-gray-200'} bg-gray-50 text-sm outline-none`}
-              />
+
+          <div className="mb-6">
+            <label className="text-sm text-gray-600 mb-1.5 block">Select Date *</label>
+            <input
+              type="date"
+              value={date}
+              min={new Date().toISOString().split('T')[0]}
+              onChange={(e) => {
+                setDate(e.target.value);
+                setTime(''); // Reset time when date changes
+              }}
+              className={`w-full px-4 py-3 rounded-xl border ${errors.date ? 'border-red-400' : 'border-gray-200'} bg-gray-50 text-sm outline-none`}
+            />
+            {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
+          </div>
+
+          {date && (
+            <div className="space-y-6">
+              <h4 className="text-sm font-bold text-gray-900">Available Slots</h4>
+
+              {loadingSlots ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                </div>
+              ) : availableSlots.length === 0 ? (
+                <p className="text-center py-4 text-sm text-gray-400">No slots available for this date</p>
+              ) : (
+                <>
+                  {[
+                    { label: 'Morning', filter: (s: string) => {
+                      const h = parseInt(s.split(':')[0]);
+                      const isPm = s.toLowerCase().includes('pm');
+                      return !isPm && h < 12;
+                    }},
+                    { label: 'Afternoon', filter: (s: string) => {
+                      const h = parseInt(s.split(':')[0]);
+                      const isPm = s.toLowerCase().includes('pm');
+                      return (isPm && (h === 12 || h < 4)) || (!isPm && h === 12);
+                    }},
+                    { label: 'Evening', filter: (s: string) => {
+                      const h = parseInt(s.split(':')[0]);
+                      const isPm = s.toLowerCase().includes('pm');
+                      return isPm && h >= 4 && h !== 12;
+                    }}
+                  ].map(group => {
+                    const groupSlots = availableSlots.filter(group.filter);
+                    if (groupSlots.length === 0) return null;
+                    return (
+                      <div key={group.label}>
+                        <p className="text-xs font-bold text-gray-400 uppercase mb-3 px-1">{group.label}</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          {groupSlots.map(slot => {
+                            const isOccupied = occupiedSlots.includes(slot);
+                            return (
+                              <button
+                                key={slot}
+                                disabled={isOccupied}
+                                onClick={() => setTime(slot)}
+                                className={cn(
+                                  "py-3 px-2 rounded-xl border text-center text-xs font-bold transition-all",
+                                  time === slot
+                                    ? "border-primary bg-primary text-white shadow-md shadow-primary/20"
+                                    : isOccupied
+                                      ? "bg-gray-100 border-gray-100 text-gray-300 cursor-not-allowed"
+                                      : "bg-white border-gray-100 text-gray-700 hover:border-primary/50"
+                                )}
+                              >
+                                {slot}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
               {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
             </div>
-          </div>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl p-4 shadow-sm">

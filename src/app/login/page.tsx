@@ -54,7 +54,7 @@ export default function LoginPage() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!identifier.trim()) newErrors.identifier = 'Email or phone is required';
-    if (!password) newErrors.password = 'Password is required';
+    if (!password) newErrors.password = 'Pin is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -336,15 +336,18 @@ export default function LoginPage() {
 
   <div>
     <label className="text-sm font-medium text-gray-700 mb-1.5 block">
-      Password
+      Pin
     </label>
 
     <div className="relative">
       <input
         type={showPassword ? 'text' : 'password'}
+        inputMode="numeric"
+        pattern="[0-9]*"
+        maxLength={4}
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Enter your password"
+        onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
+        placeholder="Enter 4-digit Pin"
         className={`w-full px-4 py-3.5 rounded-xl border ${
           errors.password ? 'border-red-400' : 'border-gray-200'
         } bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm pr-11`}

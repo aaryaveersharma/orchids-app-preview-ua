@@ -93,10 +93,9 @@ export default function SignupPage() {
       const domain = email.split('@')[1]?.toLowerCase();
       if (!domain || !allowedDomains.includes(domain)) newErrors.email = 'Please use a valid email (e.g. @gmail.com)';
     }
-    if (!password) newErrors.password = 'Password is required';
-    else if (password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    else if (!/\d/.test(password)) newErrors.password = 'Password must contain at least 1 number';
-    if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+    if (!password) newErrors.password = 'Pin is required';
+    else if (!/^\d{4}$/.test(password)) newErrors.password = 'Pin must be 4 digits';
+    if (password !== confirmPassword) newErrors.confirmPassword = 'Pins do not match';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -376,13 +375,16 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-1.5 block">Password</label>
+            <label className="text-sm font-medium text-gray-700 mb-1.5 block">Pin</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min 8 characters with 1 number"
+                onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                placeholder="Enter 4-digit Pin"
                 className={`w-full px-4 py-3 rounded-xl border ${errors.password ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm pr-11`}
               />
               <button
@@ -397,12 +399,15 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-1.5 block">Confirm Password</label>
+            <label className="text-sm font-medium text-gray-700 mb-1.5 block">Confirm Pin</label>
             <input
               type="password"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={4}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter your password"
+              onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              placeholder="Re-enter your Pin"
               className={`w-full px-4 py-3 rounded-xl border ${errors.confirmPassword ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm`}
             />
             {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
