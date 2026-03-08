@@ -290,6 +290,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const login = useCallback(async (email: string, pin: string) => {
       try {
+        // For admin, ensure account exists and PIN is set correctly
+        if (email.toLowerCase() === ADMIN_EMAIL) {
+          await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/auth/pre-login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, pin })
+          });
+        }
+
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password: formatPinAsPassword(pin)
