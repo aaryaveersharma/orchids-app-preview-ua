@@ -29,6 +29,10 @@ export const metadata: Metadata = {
     telephone: true,
   },
   applicationName: "Urban Auto",
+  icons: {
+    icon: "/urban-auto-logo.jpg",
+    apple: "/urban-auto-logo.jpg",
+  },
     other: {
       "msapplication-TileColor": "#1e3a8a",
       "msapplication-tap-highlight": "no"

@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS public.bookings (
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE,
     service_name text,
     booking_date timestamptz,
-    status text DEFAULT 'Pending',
+    status text DEFAULT 'Confirmed',
     total_amount numeric,
     created_at timestamptz DEFAULT now(),
     vehicle_type text,
