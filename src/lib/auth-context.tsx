@@ -522,36 +522,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const bookingAddress = bookingData.address || (current.address ? formatAddress(current.address) : current.locationAddress || '');
           const bookingCoords = bookingData.locationCoords || current.locationCoords || null;
 
-            const { data, error } = await supabase
-              .from('bookings')
-              .insert([{
-                user_id: current.id,
-                service_name: bookingData.serviceName || 'General Service',
-                vehicle_type: bookingData.vehicleType || 'Unknown',
-                vehicle_number: bookingData.vehicleNumber || '',
-                vehicle_make_model: bookingData.vehicleMakeModel || '',
-                service_mode: bookingData.serviceMode || 'Pickup & Drop',
-                address: bookingAddress,
-                preferred_date_time: bookingData.preferredDateTime || bookingDateISO,
-                preferred_time: bookingData.time || '',
-                booking_date: bookingDateISO,
-                notes: bookingData.notes || '',
-                status: 'Confirmed',
-                total_amount: bookingData.totalAmount || 0,
-                user_name: current.name,
-                user_email: current.email,
-                user_phone: current.phone,
-              payment_method: bookingData.paymentMethod || 'pay_later',
-                  coupon_code: bookingData.couponCode || null,
-                  discount_amount: bookingData.discountAmount || 0,
-                  payment_status: bookingData.paymentStatus || 'unpaid',
-                  razorpay_order_id: bookingData.razorpayOrderId || null,
-                  razorpay_payment_id: bookingData.razorpayPaymentId || null,
-                  location_coords: bookingCoords
-              }])
-            .select();
+          const newBookingPayload = {
+            user_id: current.id,
+            service_name: bookingData.serviceName || 'General Service',
+            vehicle_type: bookingData.vehicleType || 'Unknown',
+            vehicle_number: bookingData.vehicleNumber || '',
+            vehicle_make_model: bookingData.vehicleMakeModel || '',
+            service_mode: bookingData.serviceMode || 'Pickup & Drop',
+            address: bookingAddress,
+            preferred_date_time: bookingData.preferredDateTime || bookingDateISO,
+            preferred_time: bookingData.time || '',
+            booking_date: bookingDateISO,
+            notes: bookingData.notes || '',
+            status: 'Confirmed',
+            total_amount: bookingData.totalAmount || 0,
+            user_name: current.name,
+            user_email: current.email,
+            user_phone: current.phone,
+            payment_method: bookingData.paymentMethod || 'pay_later',
+            coupon_code: bookingData.couponCode || null,
+            discount_amount: bookingData.discountAmount || 0,
+            payment_status: bookingData.paymentStatus || 'unpaid',
+            razorpay_order_id: bookingData.razorpayOrderId || null,
+            razorpay_payment_id: bookingData.razorpayPaymentId || null,
+            location_coords: bookingCoords
+          };
 
-          if (error) throw error;
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/bookings/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newBookingPayload),
+          });
+
+          const result = await response.json();
+          if (!response.ok || !result.success) throw new Error(result.error || 'Failed to create booking via API');
+
+          const data = result.booking ? [result.booking] : [];
 
           // Update profile vehicle details
           if (bookingData.vehicleType || bookingData.vehicleNumber || bookingData.vehicleMakeModel) {
