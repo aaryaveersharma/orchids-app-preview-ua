@@ -10,31 +10,41 @@ import { useEffect, useState, useRef } from 'react';
 import { toast } from 'sonner';
 import { getAssetPath } from '@/lib/utils';
 
+import NotificationModal from '@/components/NotificationModal';
+
 function NotificationToggle() {
   const { registerNotifications, status } = useNativeNotifications();
-  const [asking, setAsking] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   if (status === 'granted') return null;
 
+  const handleEnable = async () => {
+    setShowModal(false);
+    await registerNotifications();
+  };
+
   return (
-    <button
-      onClick={async () => {
-        setAsking(true);
-        await registerNotifications();
-        setAsking(false);
-      }}
-      disabled={asking}
-      className="w-full flex items-center gap-3 p-4 hover:bg-primary/5 transition-colors"
-    >
-      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-        {asking ? <Loader2 className="w-5 h-5 text-primary animate-spin" /> : <Bell className="w-5 h-5 text-primary" />}
-      </div>
-      <div className="flex-1 text-left">
-        <span className="text-sm font-medium text-gray-900">Enable Notifications</span>
-        <p className="text-[10px] text-gray-500">Stay updated with your bookings</p>
-      </div>
-      <ChevronRight className="w-5 h-5 text-gray-400" />
-    </button>
+    <>
+      <button
+        onClick={() => setShowModal(true)}
+        className="w-full flex items-center gap-3 p-4 hover:bg-primary/5 transition-colors"
+      >
+        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+          <Bell className="w-5 h-5 text-primary" />
+        </div>
+        <div className="flex-1 text-left">
+          <span className="text-sm font-medium text-gray-900">Enable Notifications</span>
+          <p className="text-[10px] text-gray-500">Stay updated with your bookings</p>
+        </div>
+        <ChevronRight className="w-5 h-5 text-gray-400" />
+      </button>
+
+      <NotificationModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onEnable={handleEnable}
+      />
+    </>
   );
 }
 
