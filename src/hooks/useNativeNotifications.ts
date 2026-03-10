@@ -32,49 +32,88 @@ export const useNativeNotifications = () => {
   }, [user]);
 
   const registerNotifications = useCallback(async () => {
-    if (!Capacitor.isNativePlatform()) return false;
+    if (Capacitor.isNativePlatform()) {
+      try {
+        // 1. Request Permissions
+        let permStatus = await PushNotifications.requestPermissions();
+        setStatus(permStatus.receive as any);
 
-    try {
-      // 1. Request Permissions
-      let permStatus = await PushNotifications.requestPermissions();
-      setStatus(permStatus.receive as any);
+        if (permStatus.receive !== 'granted') return false;
 
-      if (permStatus.receive !== 'granted') return false;
+        // 2. Register
+        await PushNotifications.register();
 
-      // 2. Register
-      await PushNotifications.register();
+        // 3. Handle Events
+        PushNotifications.addListener('registration', (token: Token) => {
+          console.log('Push registration success, token: ' + token.value);
+          setToken(token.value);
+          saveToken(token.value);
+        });
 
-      // 3. Handle Events
-      PushNotifications.addListener('registration', (token: Token) => {
-        console.log('Push registration success, token: ' + token.value);
-        setToken(token.value);
-        saveToken(token.value);
-      });
+        PushNotifications.addListener('registrationError', (error: any) => {
+          console.error('Error on registration: ' + JSON.stringify(error));
+          setStatus('error');
+        });
 
-      PushNotifications.addListener('registrationError', (error: any) => {
-        console.error('Error on registration: ' + JSON.stringify(error));
+        PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+          console.log('Push received: ' + JSON.stringify(notification));
+        });
+
+        PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
+          console.log('Push action performed: ' + JSON.stringify(action));
+          const data = action.notification.data;
+          if (data.type === 'booking_confirmed' && data.booking_id) {
+            router.push('/bookings');
+          }
+        });
+
+        return true;
+      } catch (err) {
+        console.error('Error setting up native push notifications', err);
         setStatus('error');
-      });
+        return false;
+      }
+    } else {
+      // Browser implementation
+      if (typeof window === 'undefined' || !('Notification' in window)) {
+        setStatus('denied');
+        return false;
+      }
 
-      PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-        console.log('Push received: ' + JSON.stringify(notification));
-      });
+      try {
+        const permission = await Notification.requestPermission();
+        setStatus(permission === 'granted' ? 'granted' : 'denied');
 
-      PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
-        console.log('Push action performed: ' + JSON.stringify(action));
-        const data = action.notification.data;
-        if (data.type === 'booking_confirmed' && data.booking_id) {
-          router.push('/bookings'); // Since we don't have a specific detail page, we go to bookings list or we can try to scroll to it
+        if (permission !== 'granted') return false;
+
+        // We use the Service Worker to get the subscription
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+
+          // Note: We need a VAPID key for browser push.
+          // Since we only have FCM_API_KEY (server-side), we'll try to
+          // use the public VAPID key if available. If not, browser push might fail.
+          // For now, we'll try to get an existing subscription or log the need for VAPID.
+
+          let subscription = await registration.pushManager.getSubscription();
+
+          if (!subscription) {
+            // Ideally we need: registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY })
+            console.warn('Browser push subscription requires a VAPID public key.');
+          } else {
+            const browserToken = JSON.stringify(subscription);
+            setToken(browserToken);
+            saveToken(browserToken);
+          }
+          return !!subscription;
         }
-      });
-
-      return true;
-    } catch (err) {
-      console.error('Error setting up push notifications', err);
-      setStatus('error');
+      } catch (err) {
+        console.error('Error requesting browser notification permission', err);
+        setStatus('error');
+      }
       return false;
     }
-  }, [user]);
+  }, [user, saveToken, router]);
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) {
@@ -85,7 +124,11 @@ export const useNativeNotifications = () => {
         }
       });
     } else {
-      setStatus('denied');
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        setStatus(Notification.permission === 'default' ? 'prompt' : (Notification.permission as any));
+      } else {
+        setStatus('denied');
+      }
     }
   }, [registerNotifications]);
 

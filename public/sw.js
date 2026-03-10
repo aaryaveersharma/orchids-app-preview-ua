@@ -72,20 +72,40 @@ self.addEventListener('periodicsync', (event) => {
 
 // Push Notifications
 self.addEventListener('push', (event) => {
-  const data = event.data ? event.data.json() : { 
+  let data = {
     title: 'Urban Auto Update', 
     body: 'Check your booking status.',
     icon: '/icon-192.png',
-    badge: '/icon-192.png'
+    badge: '/icon-192.png',
+    url: '/bookings'
   };
+
+  try {
+    if (event.data) {
+      const payload = event.data.json();
+      // FCM Legacy/V1 formats vary. Handle common structures.
+      data = {
+        title: payload.notification?.title || payload.title || data.title,
+        body: payload.notification?.body || payload.body || data.body,
+        icon: payload.notification?.icon || payload.icon || data.icon,
+        url: payload.data?.url || payload.url || data.url
+      };
+    }
+  } catch (e) {
+    console.error('Error parsing push data:', e);
+    // Fallback if data is not JSON (e.g. plain text)
+    if (event.data) {
+        data.body = event.data.text();
+    }
+  }
 
   const options = {
     body: data.body,
-    icon: data.icon || '/icon-192.png',
-    badge: data.badge || '/icon-192.png',
+    icon: data.icon,
+    badge: data.icon,
     vibrate: [100, 50, 100],
     data: {
-      url: data.url || '/bookings'
+      url: data.url
     }
   };
 

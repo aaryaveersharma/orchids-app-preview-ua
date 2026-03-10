@@ -983,12 +983,18 @@ export default function AdminPanel() {
                     }
                     setPushingNotification(true);
                     try {
-                      await adminAction({
-                        action: 'send-push-notification',
-                        title: notificationTitle,
-                        content: notificationContent
+                      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/admin/push`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          title: notificationTitle,
+                          content: notificationContent
+                        })
                       });
-                      toast.success('Notification pushed to all users');
+                      const data = await res.json();
+                      if (!res.ok) throw new Error(data.error || 'Failed to send notification');
+
+                      toast.success(`Sent to ${data.deviceCount} devices (${data.successCount} successful)`);
                       setShowNotificationModal(false);
                       setNotificationTitle('');
                       setNotificationContent('');
