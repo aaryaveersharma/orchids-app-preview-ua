@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useNativeNotifications } from '@/hooks/useNativeNotifications';
 import NotificationModal from './NotificationModal';
@@ -9,40 +9,50 @@ export default function NotificationPermissionHandler() {
   const { user } = useAuth();
   const { registerNotifications, status } = useNativeNotifications();
   const [showModal, setShowModal] = useState(false);
+  const lastUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // Only proceed if user is logged in and notification status is 'prompt' (not yet decided)
-    // We check user?.id to ensure the user is fully loaded and authenticated
-    if (user?.id && status === 'prompt') {
-      const asked = localStorage.getItem('ua_notif_permission_prompted');
-      if (!asked) {
-        // Delay slightly for better UX after login/signup
-        const timer = setTimeout(() => setShowModal(true), 1500);
-        return () => clearTimeout(timer);
-      }
-    } else if (!user) {
-        // Reset state if user logs out
-        setShowModal(false);
+    if (!user?.id) {
+      // Reset when user logs out so new users get the prompt
+      setShowModal(false);
+      lastUserIdRef.current = null;
+      return;
+    }
+
+    // Only show if notification permission hasn't been decided yet
+    if (status !== 'prompt') return;
+
+    // Use a per-user key so different users on the same device each get prompted
+    const storageKey = `ua_notif_prompted_${user.id}`;
+    const alreadyPrompted = localStorage.getItem(storageKey);
+
+    if (!alreadyPrompted) {
+      // Delay slightly for better UX after login/signup redirect
+      const timer = setTimeout(() => setShowModal(true), 1500);
+      return () => clearTimeout(timer);
     }
   }, [user?.id, status]);
 
   const handleEnable = async () => {
-    // Call register first to ensure user gesture is preserved for the browser popup
     await registerNotifications();
-    localStorage.setItem('ua_notif_permission_prompted', 'true');
+    if (user?.id) {
+      localStorage.setItem(`ua_notif_prompted_${user.id}`, 'true');
+    }
     setShowModal(false);
   };
 
   const handleNoThanks = () => {
-    localStorage.setItem('ua_notif_permission_prompted', 'true');
+    if (user?.id) {
+      localStorage.setItem(`ua_notif_prompted_${user.id}`, 'true');
+    }
     setShowModal(false);
   };
 
   return (
     <NotificationModal
-        isOpen={showModal}
-        onClose={handleNoThanks}
-        onEnable={handleEnable}
+      isOpen={showModal}
+      onClose={handleNoThanks}
+      onEnable={handleEnable}
     />
   );
 }

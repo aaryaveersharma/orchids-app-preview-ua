@@ -16,7 +16,7 @@ export const useNativeNotifications = () => {
 
   const saveToken = useCallback(async (deviceToken: string) => {
     if (!user) return;
-    
+
     try {
       const { error } = await supabase
         .from('device_tokens')
@@ -44,28 +44,83 @@ export const useNativeNotifications = () => {
         }
         return false;
       }
-    }
 
-    if (!Capacitor.isNativePlatform()) {
-      // Browser logic for subscription (only if granted)
+      // Permission granted — get FCM token via Firebase Messaging SDK
+      try {
+        const { initializeApp, getApps } = await import('firebase/app');
+        const { getMessaging, getToken } = await import('firebase/messaging');
+
+        // Build Firebase config from env vars
+        const firebaseConfig = {
+          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+          messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+        };
+
+        // Only initialize if we have enough config
+        const hasConfig = firebaseConfig.projectId && firebaseConfig.messagingSenderId;
+
+        if (hasConfig) {
+          const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+          const messaging = getMessaging(app);
+
+          // Ensure firebase-messaging-sw.js is registered and initialized
+          let fcmSw: ServiceWorkerRegistration | undefined;
+          try {
+            fcmSw = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            await navigator.serviceWorker.ready;
+            // Send config to the SW so it can initialize Firebase for background messages
+            fcmSw.active?.postMessage({ type: 'FIREBASE_CONFIG', config: firebaseConfig });
+          } catch {
+            // fall through — getToken will use the default SW
+          }
+
+          const sw = await navigator.serviceWorker.ready;
+          const fcmToken = await getToken(messaging, {
+            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+            serviceWorkerRegistration: fcmSw || sw,
+          });
+
+          if (fcmToken) {
+            setToken(fcmToken);
+            await saveToken(fcmToken);
+            toast.success('Notifications enabled successfully!');
+            return true;
+          }
+        }
+      } catch (sdkErr) {
+        console.warn('Firebase SDK token fetch failed, falling back to web push:', sdkErr);
+      }
+
+      // Fallback: try standard Web Push subscription (works if VAPID key is embedded via SW)
       try {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
           const registration = await navigator.serviceWorker.ready;
-
-          // Try to get existing subscription
           let subscription = await registration.pushManager.getSubscription();
 
           if (!subscription) {
-            // Attempt to subscribe.
-            // Note: Modern browsers usually require a VAPID applicationServerKey.
-            // If FCM_API_KEY is for Legacy API, we might not have a VAPID key.
-            // We'll try a default subscribe and fallback to JSON token if endpoint is generic.
+            const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+            const subscribeOptions: PushSubscriptionOptionsInit = { userVisibleOnly: true };
+
+            if (vapidKey) {
+              // Convert VAPID key string to Uint8Array
+              const padding = '='.repeat((4 - vapidKey.length % 4) % 4);
+              const base64 = (vapidKey + padding).replace(/-/g, '+').replace(/_/g, '/');
+              const rawData = window.atob(base64);
+              const outputArray = new Uint8Array(rawData.length);
+              for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+              }
+              subscribeOptions.applicationServerKey = outputArray;
+            }
+
             try {
-              subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true
-              });
+              subscription = await registration.pushManager.subscribe(subscribeOptions);
             } catch (subErr) {
-              console.error('Browser push subscription failed:', subErr);
+              console.error('Web push subscription failed:', subErr);
             }
           }
 
@@ -73,7 +128,6 @@ export const useNativeNotifications = () => {
             const endpoint = subscription.endpoint;
             let browserToken = endpoint;
 
-            // Extract token for FCM if possible, otherwise store whole endpoint
             if (endpoint.includes('fcm.googleapis.com')) {
               const segments = endpoint.split('/');
               browserToken = segments[segments.length - 1];
@@ -88,9 +142,12 @@ export const useNativeNotifications = () => {
           }
         }
       } catch (err) {
-        console.error('Detailed browser push error:', err);
+        console.error('Web push fallback error:', err);
       }
-      return true; // Return true as permission was at least granted
+
+      // Even if we couldn't get a push token, permission is granted
+      toast.success('Notifications enabled!');
+      return true;
     }
 
     // NATIVE PATH
@@ -148,7 +205,6 @@ export const useNativeNotifications = () => {
       });
     } else {
       if (typeof window !== 'undefined' && 'Notification' in window) {
-        // Map browser statuses to our internal status
         const browserPerm = Notification.permission;
         if (browserPerm === 'default') setStatus('prompt');
         else if (browserPerm === 'granted') {

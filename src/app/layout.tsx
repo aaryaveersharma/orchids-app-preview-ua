@@ -108,6 +108,12 @@ export default function RootLayout({
                 }, function(err) {
                   console.log('ServiceWorker registration failed: ', err);
                 });
+                // Also register Firebase messaging SW for FCM background push support
+                navigator.serviceWorker.register('/firebase-messaging-sw.js').then(function(reg) {
+                  console.log('Firebase messaging SW registered:', reg.scope);
+                }).catch(function(err) {
+                  console.log('Firebase messaging SW registration failed:', err);
+                });
               });
             }
           `}
