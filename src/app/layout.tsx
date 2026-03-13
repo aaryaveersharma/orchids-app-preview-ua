@@ -108,11 +108,36 @@ export default function RootLayout({
                 }, function(err) {
                   console.log('ServiceWorker registration failed: ', err);
                 });
-                // Also register Firebase messaging SW for FCM background push support
+
+                // Register Firebase messaging SW for background push support
                 navigator.serviceWorker.register('/firebase-messaging-sw.js').then(function(reg) {
                   console.log('Firebase messaging SW registered:', reg.scope);
+                  // Send Firebase config so the SW can initialize Firebase for background messages
+                  function sendConfig(sw) {
+                    sw.postMessage({
+                      type: 'FIREBASE_CONFIG',
+                      config: {
+                        apiKey: '${process.env.NEXT_PUBLIC_FIREBASE_API_KEY || ''}',
+                        authDomain: '${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || ''}',
+                        projectId: '${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || ''}',
+                        storageBucket: '${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || ''}',
+                        messagingSenderId: '${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || ''}',
+                        appId: '${process.env.NEXT_PUBLIC_FIREBASE_APP_ID || ''}',
+                      }
+                    });
+                  }
+                  if (reg.active) sendConfig(reg.active);
+                  reg.addEventListener('updatefound', function() {
+                    var newSW = reg.installing;
+                    if (newSW) newSW.addEventListener('statechange', function() {
+                      if (newSW.state === 'activated') sendConfig(newSW);
+                    });
+                  });
+                  navigator.serviceWorker.ready.then(function(r) {
+                    if (r.active) sendConfig(r.active);
+                  });
                 }).catch(function(err) {
-                  console.log('Firebase messaging SW registration failed:', err);
+                  console.warn('Firebase messaging SW failed:', err);
                 });
               });
             }

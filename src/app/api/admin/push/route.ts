@@ -17,10 +17,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
     }
 
-    // 1. Get all device tokens from Supabase
+    // 1. Fetch all device tokens
     const { data: tokens, error: tokenError } = await supabaseAdmin
       .from('device_tokens')
-      .select('id, token');
+      .select('token');
 
     if (tokenError) {
       console.error('Error fetching device tokens:', tokenError);
@@ -34,71 +34,94 @@ export async function POST(request: Request) {
         success: true,
         message: 'No devices registered for notifications',
         deviceCount: 0,
-        successCount: 0
+        successCount: 0,
       });
     }
 
-    // 2. Try Firebase Admin SDK first (most reliable, handles both native and web tokens)
-    const failedTokens = await sendPushNotification(tokenList, title, content, {
-      url: 'https://urbanauto.in',
-    });
+    // 2. Separate plain FCM tokens from JSON web push subscriptions
+    const plainTokens: string[] = [];
+    const webSubTokens: string[] = [];
 
-    // 3. Clean up invalid tokens reported by Firebase Admin SDK
-    if (failedTokens.length > 0) {
-      console.log(`Removing ${failedTokens.length} invalid tokens`);
-      for (const badToken of failedTokens) {
-        await supabaseAdmin.from('device_tokens').delete().eq('token', badToken);
+    for (const t of tokenList) {
+      try {
+        const parsed = JSON.parse(t);
+        if (parsed.endpoint) {
+          webSubTokens.push(t);
+        } else {
+          plainTokens.push(t);
+        }
+      } catch {
+        plainTokens.push(t);
       }
     }
 
-    const successCount = tokenList.length - failedTokens.length;
+    let successCount = 0;
 
-    // 4. Fallback: Also try FCM Legacy HTTP API for any web push subscriptions (JSON format)
-    //    These are stored as JSON strings and aren't handled by Firebase Admin SDK
+    // 3. Send to plain FCM tokens via Firebase Admin SDK
+    if (plainTokens.length > 0) {
+      const failedTokens = await sendPushNotification(
+        plainTokens,
+        title,
+        content,
+        { url: 'https://urbanauto.in' }
+      );
+
+      // Clean up invalid tokens
+      for (const bad of failedTokens) {
+        await supabaseAdmin.from('device_tokens').delete().eq('token', bad);
+      }
+
+      successCount += plainTokens.length - failedTokens.length;
+    }
+
+    // 4. Send to web push JSON subscriptions via FCM Legacy HTTP API
     const fcmApiKey = process.env.FCM_API_KEY;
-    if (fcmApiKey) {
-      const webSubscriptions = tokenList.filter(t => {
+    if (fcmApiKey && webSubTokens.length > 0) {
+      const fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+
+      const results = await Promise.all(webSubTokens.map(async (subJson) => {
         try {
-          const parsed = JSON.parse(t);
-          return parsed.endpoint && typeof parsed.endpoint === 'string';
-        } catch {
+          const sub = JSON.parse(subJson);
+          const endpoint = sub.endpoint as string;
+
+          // Extract FCM token from endpoint URL
+          if (endpoint.includes('fcm.googleapis.com')) {
+            const fcmToken = endpoint.split('/').pop();
+            const response = await fetch(fcmUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `key=${fcmApiKey}`,
+              },
+              body: JSON.stringify({
+                to: fcmToken,
+                notification: {
+                  title,
+                  body: content,
+                  icon: 'https://urbanauto.in/icon-192.png',
+                  click_action: 'https://urbanauto.in',
+                },
+                data: { url: 'https://urbanauto.in' },
+              }),
+            });
+
+            if (!response.ok) {
+              const errText = await response.text();
+              if (errText.includes('NotRegistered') || errText.includes('InvalidRegistration')) {
+                await supabaseAdmin.from('device_tokens').delete().eq('token', subJson);
+              }
+              return false;
+            }
+            return true;
+          }
+          return false;
+        } catch (err) {
+          console.error('Web sub send error:', err);
           return false;
         }
-      });
+      }));
 
-      if (webSubscriptions.length > 0) {
-        const fcmUrl = 'https://fcm.googleapis.com/fcm/send';
-        await Promise.all(webSubscriptions.map(async (subJson) => {
-          try {
-            const sub = JSON.parse(subJson);
-            const endpoint = sub.endpoint;
-            // Extract FCM token from endpoint if it's an FCM endpoint
-            if (endpoint.includes('fcm.googleapis.com')) {
-              const segments = endpoint.split('/');
-              const fcmToken = segments[segments.length - 1];
-              await fetch(fcmUrl, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `key=${fcmApiKey}`,
-                },
-                body: JSON.stringify({
-                  to: fcmToken,
-                  notification: {
-                    title,
-                    body: content,
-                    icon: '/icon-192.png',
-                    click_action: 'https://urbanauto.in',
-                  },
-                  data: { url: 'https://urbanauto.in' },
-                }),
-              });
-            }
-          } catch (err) {
-            console.error('Web sub FCM send error:', err);
-          }
-        }));
-      }
+      successCount += results.filter(Boolean).length;
     }
 
     return NextResponse.json({

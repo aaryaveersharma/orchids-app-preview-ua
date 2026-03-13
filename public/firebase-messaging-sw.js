@@ -1,65 +1,68 @@
 // Firebase Messaging Service Worker
-// Required by Firebase JS SDK for background push notifications
+// Required by Firebase JS SDK for background push message handling
 
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-// Firebase config is injected at runtime via __FIREBASE_CONFIG__ message
-// or falls back to reading from the service worker's own URL search params.
-// The messaging SDK handles the push event and shows notifications automatically.
-
+// Receive Firebase config from the main app and initialize
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'FIREBASE_CONFIG') {
-    const config = event.data.config;
-    if (config && !self._firebaseInitialized) {
-      try {
-        firebase.initializeApp(config);
-        firebase.messaging();
-        self._firebaseInitialized = true;
-        console.log('[FCM SW] Firebase initialized with project:', config.projectId);
-      } catch (e) {
-        console.error('[FCM SW] Init error:', e);
-      }
+  if (event.data && event.data.type === 'FIREBASE_CONFIG' && !self._firebaseInitialized) {
+    try {
+      firebase.initializeApp(event.data.config);
+      const messaging = firebase.messaging();
+
+      // Handle background messages (app closed / backgrounded)
+      messaging.onBackgroundMessage((payload) => {
+        const title = payload.notification?.title || 'Urban Auto';
+        const body = payload.notification?.body || '';
+        const icon = payload.notification?.icon || '/icon-192.png';
+        const url = payload.data?.url || 'https://urbanauto.in';
+
+        self.registration.showNotification(title, {
+          body,
+          icon,
+          badge: '/icon-192.png',
+          vibrate: [100, 50, 100],
+          data: { url },
+        });
+      });
+
+      self._firebaseInitialized = true;
+      console.log('[FCM SW] Initialized for project:', event.data.config.projectId);
+    } catch (e) {
+      console.error('[FCM SW] Init error:', e);
     }
   }
 });
 
-// Handle background push messages (when app is closed/in background)
-// The Firebase messaging SDK will handle this automatically once initialized.
-// But we also keep a manual handler as fallback:
+// Fallback push handler (used when Firebase SDK is not initialized yet)
 self.addEventListener('push', (event) => {
-  // If Firebase SDK is handling it, this won't run for FCM messages.
-  // This fallback handles any non-FCM web push messages.
   if (self._firebaseInitialized) return;
 
-  let data = {
-    title: 'Urban Auto Update',
-    body: 'Check your booking status.',
-    icon: '/icon-192.png',
-    url: '/bookings'
-  };
+  let title = 'Urban Auto';
+  let body = 'You have a new update.';
+  let icon = '/icon-192.png';
+  let url = 'https://urbanauto.in';
 
   try {
     if (event.data) {
       const payload = event.data.json();
-      data = {
-        title: payload.notification?.title || payload.title || data.title,
-        body: payload.notification?.body || payload.body || data.body,
-        icon: payload.notification?.icon || payload.icon || data.icon,
-        url: payload.data?.url || payload.fcmOptions?.link || payload.url || data.url,
-      };
+      title = payload.notification?.title || payload.title || title;
+      body = payload.notification?.body || payload.body || body;
+      icon = payload.notification?.icon || icon;
+      url = payload.data?.url || payload.fcmOptions?.link || url;
     }
-  } catch (e) {
-    if (event.data) data.body = event.data.text();
+  } catch {
+    if (event.data) body = event.data.text();
   }
 
   event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: data.icon,
+    self.registration.showNotification(title, {
+      body,
+      icon,
       badge: '/icon-192.png',
       vibrate: [100, 50, 100],
-      data: { url: data.url },
+      data: { url },
     })
   );
 });
