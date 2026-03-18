@@ -74,65 +74,33 @@ export default function HomePage() {
   return (
     <main className="mobile-container min-h-screen safe-bottom pb-12">
       {/* Dynamic Hero Section */}
-      <header className="px-6 pt-10 pb-16 relative overflow-hidden bg-black/5">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-8">
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              className="flex items-center gap-3"
-            >
-              <div className="p-2 bg-primary rounded-full rotate-3">
-                <Image
-                  src={getAssetPath('/hashtag-logo.png')}
-                  alt="Hashtag Garage"
-                  width={28}
-                  height={28}
-                  className="rounded-full invert"
-                  priority
-                  unoptimized
-                />
-              </div>
-              <h1 className="text-xl font-black tracking-tighter text-black">HASHTAG <span className="text-primary">GARAGE</span></h1>
-            </motion.div>
-
-            <motion.a
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              href="tel:+918889822220"
-              className="w-10 h-10 glass-card rounded-full flex items-center justify-center hover:bg-primary group transition-colors"
-            >
-              <Phone className="w-4 h-4 text-black group-hover:text-white transition-colors" />
-            </motion.a>
-          </div>
-
+      <header className="px-6 pt-12 pb-10 relative overflow-hidden bg-white">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+        <div className="relative z-10 flex flex-col items-center">
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
+            initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mb-8"
+            className="flex flex-col items-center mb-8"
           >
-            <h2 className="text-2xl font-black mb-2 leading-[1.1] text-black uppercase tracking-tighter">
-              PRIME CAR CARE <br />
-              <span className="gradient-text">REDEFINED.</span>
-            </h2>
-            <div
-              className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 glass-card rounded-full text-[10px] font-bold tracking-widest uppercase cursor-pointer hover:border-primary/50 transition-all"
-              onClick={() => setShowAddressForm(true)}
-            >
-              <MapPin className="w-3 h-3 text-primary" />
-              <span className="line-clamp-1 max-w-[200px] text-black/70">
-                {user.locationAddress || 'Locate Garage'}
-              </span>
-            </div>
+            <Image
+              src={getAssetPath('/hashtag-logo.png')}
+              alt="Hashtag Garage"
+              width={180}
+              height={70}
+              className="object-contain mb-4"
+              priority
+              unoptimized
+            />
+            <h1 className="text-2xl font-black tracking-tighter text-black uppercase">
+              HASHTAG <span className="text-primary">GARAGE</span>
+            </h1>
           </motion.div>
 
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="relative group"
+            transition={{ delay: 0.2 }}
+            className="w-full relative group mb-6"
           >
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black/30 group-focus-within:text-primary transition-colors" />
             <input
@@ -197,13 +165,13 @@ export default function HomePage() {
 
           <div className="flex items-start justify-between relative z-10">
             <div className="flex gap-4">
-              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center p-2 rotate-3 group-hover:rotate-0 transition-transform">
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center p-2 group-hover:scale-110 transition-transform">
                 <Image
                   src={getAssetPath('/hashtag-logo.png')}
                   alt="Hashtag Garage Workshop"
-                  width={50}
-                  height={50}
-                  className="rounded-full invert"
+                  width={60}
+                  height={60}
+                  className="rounded-xl"
                   unoptimized
                 />
               </div>

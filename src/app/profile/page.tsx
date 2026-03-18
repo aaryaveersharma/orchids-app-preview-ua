@@ -212,7 +212,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="mt-12 text-center pb-10">
-          <Image src={getAssetPath('/hashtag-logo.png')} alt="Hashtag Garage" width={50} height={50} className="rounded-2xl mx-auto mb-4 invert opacity-20" unoptimized />
+          <Image src={getAssetPath('/hashtag-logo.png')} alt="Hashtag Garage" width={100} height={40} className="mx-auto mb-4 opacity-20 object-contain" unoptimized />
           <p className="text-[10px] text-black/10 font-black uppercase tracking-[0.4em]">HASHTAG GARAGE V1.0.0</p>
         </div>
       </div>

@@ -9,7 +9,7 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getAssetPath } from '@/lib/utils';
 
-export default function LoginPage() {
+export default function LoginClient() {
   const searchParams = useSearchParams();
   const [identifier, setIdentifier] = useState(searchParams.get('email') || '');
   const [loading, setLoading] = useState(false);
@@ -70,14 +70,13 @@ export default function LoginPage() {
   return (
     <div className="mobile-container bg-white text-black min-h-screen flex flex-col px-6 py-8">
       <div className="flex flex-col items-center mb-8 mt-10">
-        <div className="relative w-[80px] h-[80px] flex items-center justify-center">
-          <div className="absolute inset-0 bg-primary rounded-full shadow-lg shadow-primary/20" />
+        <div className="relative w-full h-[80px] flex items-center justify-center">
           <Image
             src={getAssetPath('/hashtag-logo.png')}
             alt="Hashtag Garage"
-            width={70}
-            height={70}
-            className="rounded-full relative z-10 invert object-cover"
+            width={200}
+            height={80}
+            className="relative z-10 object-contain"
             priority
             unoptimized
           />

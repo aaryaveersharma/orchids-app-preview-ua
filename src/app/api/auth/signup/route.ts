@@ -31,7 +31,8 @@ export async function POST(request: Request) {
     // Default password for simple auth if not provided
     const finalPassword = password || '1234';
     // Dummy phone if not provided, since schema requires it
-    const finalPhone = phone || email.split('@')[0].replace(/\D/g, '').slice(0, 10).padEnd(10, '0');
+    // Use a unique dummy phone based on timestamp to avoid collisions
+    const finalPhone = phone || `DUMMY_${Date.now()}`;
 
     // Create user and auto-confirm email
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({

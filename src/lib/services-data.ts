@@ -42,7 +42,7 @@ export const services: Service[] = [
       id: 'buy-sale-used-car',
       name: 'Buy/Sale Used Car',
       subtitle: 'Verified Vehicles & Fair Pricing',
-      image: '/car-dealership.jpg',
+      image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?q=80&w=1000&auto=format&fit=crop',
       category: 'general',
       features: ['100+ Points Check', 'RC Transfer', 'Best Price Guarantee', 'Instant Payment', 'Verified Sellers'],
       price: 0,
