@@ -2,51 +2,44 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { formatPinAsPassword } from '@/lib/utils';
 
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+}
+
 export async function POST(request: Request) {
-  console.log('Signup request received');
+  const supabaseAdmin = getSupabaseAdmin();
   try {
     const body = await request.text();
-    console.log('Signup body:', body);
     
     let data;
     try {
       data = JSON.parse(body);
     } catch (e) {
-      console.error('Failed to parse signup body as JSON:', body);
       return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 });
     }
     
-    const { name, email, phone, password, otpVerified } = data;
+    const { name, email, phone, password } = data;
 
-    if (!email || !password || !name || !phone) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!email || !name) {
+        return NextResponse.json({ error: 'Email and Name are required' }, { status: 400 });
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      console.error('Missing Supabase environment variables');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
-
-    const supabaseAdmin = createClient(
-      supabaseUrl,
-      supabaseServiceKey,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
+    // Default password for simple auth if not provided
+    const finalPassword = password || '1234';
+    // Dummy phone if not provided, since schema requires it
+    // Use a unique dummy phone based on timestamp to avoid collisions
+    const finalPhone = phone || `DUMMY_${Date.now()}`;
 
     // Create user and auto-confirm email
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
       email,
-      password: formatPinAsPassword(password),
+      password: formatPinAsPassword(finalPassword),
       email_confirm: true,
-      user_metadata: { full_name: name, phone: phone }
+      user_metadata: { full_name: name, phone: finalPhone }
     });
 
     if (userError) {
@@ -68,8 +61,8 @@ export async function POST(request: Request) {
             id: userData.user.id,
             email,
             full_name: name,
-            phone: phone,
-            verified: otpVerified === true ? true : false,
+            phone: finalPhone,
+            verified: true,
             blocked: false,
             updated_at: new Date().toISOString()
           }
@@ -77,7 +70,6 @@ export async function POST(request: Request) {
 
     if (profileError) {
       console.error('Profile Creation Error:', profileError);
-      // Even if profile fails, user is created. But we should try to handle it.
       return NextResponse.json({ error: 'User created but profile setup failed' }, { status: 500 });
     }
 
@@ -87,7 +79,7 @@ export async function POST(request: Request) {
         id: userData.user.id,
         email: email,
         name: name,
-        phone: phone
+        phone: finalPhone
       }
     });
   } catch (error: any) {

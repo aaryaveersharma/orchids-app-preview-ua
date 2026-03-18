@@ -2,17 +2,20 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { formatPinAsPassword } from '@/lib/utils';
 
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+}
+
 export async function POST(request: Request) {
+  const supabaseAdmin = getSupabaseAdmin();
   try {
     const { email, pin } = await request.json();
 
-    if (email?.toLowerCase() === 'theurbanauto@gmail.com') {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-      const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-        auth: { autoRefreshToken: false, persistSession: false }
-      });
-
+    if (email?.toLowerCase() === 'pilot@hashtaggarage.in') {
       // Fix from root: If admin types 1234, we ensure the account exists and uses 1234.
       // This solves the "invalid credentials" issue for the desired pin.
       if (pin === '1234') {

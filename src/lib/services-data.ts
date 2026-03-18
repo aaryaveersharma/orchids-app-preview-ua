@@ -13,137 +13,93 @@ export interface Service {
   homeServiceAvailable: boolean;
 }
 
-export const HOME_SERVICE_IDS = ['car-wash', 'interior-detailing', 'exterior-detailing'];
+export const HOME_SERVICE_IDS = ['car-servicing', 'car-detailing', 'car-coating'];
 
 export const services: Service[] = [
     {
-      id: 'car-wash',
-      name: 'Car Wash',
-      subtitle: 'Professional Cleaning Service At Home',
-      image: '/car-wash.png',
+      id: 'car-servicing',
+      name: 'Car Servicing',
+      subtitle: 'Complete Mechanical & Fluid Check',
+      image: '/oil-change.jpg',
       category: 'wash',
-      features: ['Pressure Wash', 'Deep Vacuum', 'Mat Cleaning', 'Dashboard Polishing', 'Tire Shine'],
+      features: ['Oil Change', 'Filter Clean', 'Brake Check', 'Fluid Top-up', 'Engine Scan'],
       price: 499,
       priceLabel: 'Starting at',
       homeServiceAvailable: true
     },
     {
-      id: 'interior-detailing',
-      name: 'Interior Detailing',
-      subtitle: 'Complete Cabin Rejuvenation & Sanitization',
-      image: '/interior-detailing.jpg',
-      category: 'detailing',
-      features: ['Deep Cleaning', 'Leather Treatment', 'Sanitization', 'Odor Removal', 'AC Vent Cleaning'],
-      price: 2499,
-      priceLabel: 'Starting at',
-      homeServiceAvailable: true
-    },
-    {
-      id: 'exterior-detailing',
-      name: 'Exterior Detailing',
-      subtitle: 'Unmatched Shine & Paint Protection',
-      image: '/exterior-detailing.png',
-      category: 'detailing',
-      features: ['Paint Correction', 'Chrome Polishing', 'Wax Coating', 'Glass Treatment', 'Wheel Detailing'],
-      price: 2999,
-      priceLabel: 'Starting at',
-      homeServiceAvailable: true
-    },
-    {
-      id: 'periodic-service',
-      name: 'Periodic Service',
-      subtitle: 'Expert Maintenance for Peak Performance',
-      image: '/periodic-service.png',
-      category: 'general',
-      features: ['Oil Change', 'Filter Replacement', 'Brake Inspection', 'Fluid Top-up', 'Multi-point Check'],
-      price: 3999,
-      priceLabel: 'Starting at',
-      homeServiceAvailable: false
-    },
-    {
       id: 'denting-painting',
       name: 'Denting & Painting',
-      subtitle: 'Precision Body Work & Factory Finish',
+      subtitle: 'Premium Body Work & Finish',
       image: '/denting-painting.jpg',
       category: 'repair',
-      features: ['Dent Removal', 'Scratch Repair', 'Full Body Paint', 'Color Matching', 'Clear Coat'],
-      price: 2999,
+      features: ['Dent Removal', 'Scratch Repair', 'Color Matching', 'Factory Finish', 'Full Body Paint'],
+      price: 2499,
       priceLabel: 'Starting at',
       homeServiceAvailable: false
     },
     {
-      id: 'suspension-fitments',
-      name: 'Suspension & Fitments',
-      subtitle: 'Smooth Handling & Ride Comfort',
-      image: '/suspension.jpg',
-      category: 'repair',
-      features: ['Shock Absorbers', 'Strut Replacement', 'Alignment', 'Bushing Replacement', 'Spring Repair'],
-      price: 1999,
-      priceLabel: 'Starting at',
-      homeServiceAvailable: false
-    },
-    {
-      id: 'clutch-body-parts',
-      name: 'Clutch & Body Parts',
-      subtitle: 'Seamless Power Delivery & Component Replacement',
-      image: '/clutch.jpg',
-      category: 'repair',
-      features: ['Clutch Plate', 'Pressure Plate', 'Flywheel Service', 'Body Panel Repair', 'Parts Replacement'],
-      price: 3499,
-      priceLabel: 'Starting at',
-      homeServiceAvailable: false
-    },
-    {
-      id: 'insurance-claims',
-      name: 'Insurance Claims',
-      subtitle: 'Hassle-Free Accident Recovery',
-      image: '/insurance.png',
+      id: 'buy-sale-used-car',
+      name: 'Buy/Sale Used Car',
+      subtitle: 'Verified Vehicles & Fair Pricing',
+      image: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?q=80&w=1000&auto=format&fit=crop',
       category: 'general',
-      features: ['Claim Processing', 'Documentation Help', 'Surveyor Coordination', 'Cashless Service', 'Quick Settlement'],
-      price: 0,
-      priceLabel: 'Get Quote',
-      homeServiceAvailable: false
-    },
-    {
-      id: 'roadside-assistance',
-      name: 'Roadside Assistance',
-      subtitle: 'Reliable Support Whenever You Need It',
-      image: '/roadside.jpg',
-      category: 'general',
-      features: ['24/7 Support', 'Towing Service', 'Battery Jump Start', 'Flat Tire Help', 'Fuel Delivery'],
-      price: 999,
-      priceLabel: 'Starting at',
-      homeServiceAvailable: false
-    },
-    {
-      id: 'accidental-repair',
-      name: 'Accidental Repair',
-      subtitle: 'Major Collision Repair Specialists',
-      image: '/accidental.jpg',
-      category: 'repair',
-      features: ['Frame Straightening', 'Panel Replacement', 'Structural Repair', 'Airbag Replacement', 'Full Restoration'],
-      price: 0,
-      priceLabel: 'Get Quote',
-      homeServiceAvailable: false
-    },
-    {
-      id: 'car-dealership',
-      name: 'Car Dealership',
-      subtitle: 'Buy & Sell Quality Pre-Owned Vehicles',
-      image: '/car-dealership-hd.jpg',
-      category: 'general',
-      features: ['Verified Vehicles', 'Documentation Help', 'Fair Pricing', 'Inspection Report', 'Transfer Assistance'],
+      features: ['100+ Points Check', 'RC Transfer', 'Best Price Guarantee', 'Instant Payment', 'Verified Sellers'],
       price: 0,
       priceLabel: 'Contact Us',
+      homeServiceAvailable: false
+    },
+    {
+      id: 'car-detailing',
+      name: 'Car Detailing',
+      subtitle: 'Deep Interior & Exterior Rejuvenation',
+      image: '/interior-detailing.jpg',
+      category: 'detailing',
+      features: ['Steam Cleaning', 'Odor Removal', 'Leather Conditioning', 'Clay Bar Treatment', 'Machine Polish'],
+      price: 2999,
+      priceLabel: 'Starting at',
+      homeServiceAvailable: true
+    },
+    {
+      id: 'car-coating',
+      name: 'Car Coating',
+      subtitle: 'Ceramic & Graphene Protection',
+      image: '/exterior-detailing.png',
+      category: 'detailing',
+      features: ['9H Ceramic', 'Hydrophobic Finish', 'UV Protection', 'Ultra Gloss', 'Long-lasting'],
+      price: 9999,
+      priceLabel: 'Starting at',
+      homeServiceAvailable: true
+    },
+    {
+      id: 'paint-protection-film',
+      name: 'Paint Protection Film (PPF)',
+      subtitle: 'Ultimate Shield Against Scratches',
+      image: '/periodic-service.png',
+      category: 'detailing',
+      features: ['Self-healing', 'Anti-Yellowing', 'Impact Resistant', 'Clear Gloss/Matte', 'Warranty'],
+      price: 19999,
+      priceLabel: 'Starting at',
+      homeServiceAvailable: false
+    },
+    {
+      id: 'other-services',
+      name: 'Other Car Services',
+      subtitle: 'Miscellaneous Automotive Solutions',
+      image: '/roadside.jpg',
+      category: 'general',
+      features: ['Battery Jumpstart', 'Tire Replacement', 'AC Repair', 'Electrical Works', 'Custom Jobs'],
+      price: 0,
+      priceLabel: 'Get Quote',
       homeServiceAvailable: false
     }
 ];
 
 export const serviceCategories = [
-  { id: 'wash', name: 'Car Wash', icon: 'sparkles', color: '#10B981' },
-  { id: 'detailing', name: 'Detailing', icon: 'sparkles', color: '#3B82F6' },
-  { id: 'repair', name: 'Repairing', icon: 'wrench', color: '#F59E0B' },
-  { id: 'general', name: 'General', icon: 'settings', color: '#8B5CF6' }
+  { id: 'wash', name: 'Servicing', icon: 'sparkles', color: '#FF5722' },
+  { id: 'detailing', name: 'Detailing', icon: 'sparkles', color: '#FF7043' },
+  { id: 'repair', name: 'Painting', icon: 'wrench', color: '#FF8A65' },
+  { id: 'general', name: 'General', icon: 'settings', color: '#FFAB91' }
 ];
 
 export const getServicesByCategory = (category: string) => {

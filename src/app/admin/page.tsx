@@ -455,7 +455,7 @@ export default function AdminPanel() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold">Admin Panel</h1>
-            <p className="text-xs text-white/70">Urban Auto Garage</p>
+            <p className="text-xs text-white/70">Hashtag Garage</p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setShowNotificationModal(true)} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors" title="Push Notification">
@@ -1219,7 +1219,7 @@ export default function AdminPanel() {
                 <div className="space-y-3">
                   <div>
                     <label className="text-[10px] font-bold text-gray-500 uppercase">UPI ID</label>
-                    <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="e.g. urbanauto@okaxis" className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none mt-1" />
+                    <input type="text" value={upiId} onChange={(e) => setUpiId(e.target.value)} placeholder="e.g. hashtag@okaxis" className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm outline-none mt-1" />
                   </div>
                   <div>
                     <label className="text-[10px] font-bold text-gray-500 uppercase">QR Code Image</label>

@@ -17,13 +17,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://urbanauto.in'),
+  metadataBase: new URL('https://hashtagcars.in'),
   title: {
-    default: "Urban Auto | Premium Car Care in Raipur",
-    template: "%s | Urban Auto"
+    default: "Hashtag Garage | Premium Car Care in Raipur",
+    template: "%s | Hashtag Garage"
   },
   description: "Raipur's premier modern mechanized car care brand. Professional car cleaning, detailing, and auto services. Best car wash, ceramic coating, and detailing in Raipur.",
-  keywords: ["car care Raipur", "car wash Raipur", "ceramic coating Raipur", "car detailing Raipur", "Urban Auto Raipur", "best car service Raipur"],
+  keywords: ["car care Raipur", "car wash Raipur", "ceramic coating Raipur", "car detailing Raipur", "Hashtag Garage Raipur", "best car service Raipur"],
   manifest: "/manifest.json",
   alternates: {
     canonical: '/',
@@ -31,32 +31,32 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Urban Auto",
+    title: "Hashtag Garage",
   },
   formatDetection: {
     telephone: true,
   },
-  applicationName: "Urban Auto",
+  applicationName: "Hashtag Garage",
   icons: {
     icon: [
-      { url: "/urban-auto-logo.jpg", sizes: "32x32" },
-      { url: "/urban-auto-logo.jpg", sizes: "16x16" },
-      { url: "/urban-auto-logo.jpg" },
+      { url: "/hashtag-logo.png", sizes: "32x32" },
+      { url: "/hashtag-logo.png", sizes: "16x16" },
+      { url: "/hashtag-logo.png" },
     ],
-    apple: "/urban-auto-logo.jpg",
-    shortcut: "/urban-auto-logo.jpg",
+    apple: "/hashtag-logo.png",
+    shortcut: "/hashtag-logo.png",
   },
   openGraph: {
-    title: "Urban Auto | Premium Car Care in Raipur",
+    title: "Hashtag Garage | Premium Car Care in Raipur",
     description: "Raipur's premier modern mechanized car care brand. Professional car cleaning, detailing, and auto services.",
-    url: 'https://urbanauto.in',
-    siteName: 'Urban Auto',
+    url: 'https://hashtagcars.in',
+    siteName: "Hashtag Garage",
     images: [
       {
-        url: '/urban-auto-logo.jpg',
+        url: '/hashtag-logo.png',
         width: 1200,
         height: 630,
-        alt: 'Urban Auto - Premium Car Care Raipur',
+        alt: "Hashtag Garage - Premium Car Care Raipur",
       },
     ],
     locale: 'en_IN',
@@ -64,9 +64,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Urban Auto | Premium Car Care in Raipur',
+    title: "Hashtag Garage | Premium Car Care in Raipur",
     description: "Professional car cleaning, detailing, and auto services in Raipur.",
-    images: ['/urban-auto-logo.jpg'],
+    images: ['/hashtag-logo.png'],
   },
   other: {
     "msapplication-TileColor": "#1e3a8a",
@@ -117,14 +117,14 @@ export default function RootLayout({
             {
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
-              "name": "Urban Auto",
-              "image": "https://urbanauto.in/urban-auto-logo.jpg",
-              "@id": "https://urbanauto.in",
-              "url": "https://urbanauto.in",
+              "name": "Hashtag Garage",
+              "image": "https://hashtagcars.in/hashtag-logo.png",
+              "@id": "https://hashtagcars.in",
+              "url": "https://hashtagcars.in",
               "telephone": "+918889822220",
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": "Sunder Nagar",
+                "streetAddress": "Kota canal road, near Vivekanand stadium",
                 "addressLocality": "Raipur",
                 "addressRegion": "Chhattisgarh",
                 "postalCode": "492001",
@@ -150,7 +150,7 @@ export default function RootLayout({
                 "closes": "21:00"
               },
               "sameAs": [
-                "https://www.instagram.com/theurbanauto"
+                "https://www.instagram.com/hashtaggarage"
               ],
               "priceRange": "$$"
             }

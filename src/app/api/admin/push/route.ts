@@ -1,14 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: { autoRefreshToken: false, persistSession: false }
-});
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Supabase admin environment variables are not set');
+  }
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+}
 
 export async function POST(request: Request) {
+  const supabaseAdmin = getSupabaseAdmin();
   try {
     // Basic security check: Verify if the request comes from an authenticated admin session
     // In a production environment, we should use supabase.auth.getUser() with the JWT
@@ -58,11 +63,11 @@ export async function POST(request: Request) {
             notification: {
               title,
               body: content,
-              icon: 'https://urbanauto.in/icon-192.png',
-              click_action: 'https://urbanauto.in',
+              icon: 'https://hashtaggarage.in/icon-192.png',
+              click_action: 'https://hashtaggarage.in',
             },
             data: {
-              url: 'https://urbanauto.in',
+              url: 'https://hashtaggarage.in',
             }
           }),
         });

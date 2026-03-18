@@ -42,8 +42,8 @@ export default function SplashScreen() {
     <div className="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center">
       <div className="relative w-[120px] h-[120px] flex items-center justify-center">
         <Image
-          src={getAssetPath('/urban-auto-logo.jpg')}
-          alt="Urban Auto"
+          src={getAssetPath('/hashtag-logo.png')}
+          alt="Hashtag Garage"
           width={120}
           height={120}
           className="rounded-2xl shadow-xl object-cover"
@@ -57,7 +57,7 @@ export default function SplashScreen() {
         className="mt-6 text-center"
       >
         <h1 className="text-2xl font-bold text-gray-900">
-          URBAN <span className="text-primary">AUTO</span>
+          HASHTAG <span className="text-primary">GARAGE</span>
         </h1>
         <p className="text-xs text-gray-500 mt-1 tracking-widest uppercase">Raipur</p>
       </motion.div>

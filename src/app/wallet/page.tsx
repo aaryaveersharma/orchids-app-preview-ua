@@ -78,7 +78,7 @@ export default function WalletPage() {
         <div className="px-6 pt-8">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <h1 className="text-2xl font-black leading-tight text-gray-900">Urban Auto</h1>
+              <h1 className="text-2xl font-black leading-tight text-gray-900">Hashtag Garage</h1>
               <h1 className="text-3xl font-black leading-tight text-gray-900">Wallet</h1>
               <p className="text-sm text-gray-500 mt-2">Faster checkouts and<br />hassle-free refunds</p>
             </div>

@@ -21,7 +21,7 @@ export default function NotificationModal({ isOpen, onClose, onEnable }: Notific
             className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Design elements to match Urban Auto */}
+            {/* Design elements to match Hashtag Garage */}
             <div className="absolute top-0 left-0 w-full h-1.5 bg-primary" />
 
             <div className="flex flex-col items-center text-center">

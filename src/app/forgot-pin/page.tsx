@@ -175,8 +175,8 @@ export default function ForgotPinPage() {
       <div className="flex flex-col items-center mb-8">
         <div className="relative w-[80px] h-[80px] flex items-center justify-center">
           <Image
-            src={getAssetPath('/urban-auto-logo.jpg')}
-            alt="Urban Auto"
+            src={getAssetPath('/hashtag-logo.png')}
+            alt="Hashtag Garage"
             width={80}
             height={80}
             className="rounded-xl shadow-md object-cover"
@@ -185,7 +185,7 @@ export default function ForgotPinPage() {
           />
         </div>
         <h2 className="text-xl font-bold text-gray-900 mt-4">
-          URBAN <span className="text-primary">AUTO</span>
+          HASHTAG <span className="text-primary">GARAGE</span>
         </h2>
       </div>
 

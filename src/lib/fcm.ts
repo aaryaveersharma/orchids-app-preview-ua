@@ -1,6 +1,8 @@
 import admin from 'firebase-admin';
 
-if (!admin.apps.length) {
+function initializeFirebase() {
+  if (admin.apps.length) return true;
+
   try {
     const saJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
     if (saJson) {
@@ -10,19 +12,24 @@ if (!admin.apps.length) {
           credential: admin.credential.cert(serviceAccount),
         });
         console.log('Firebase Admin initialized successfully');
+        return true;
       } else {
         console.error('Firebase service account missing project_id');
       }
     } else {
-      console.error('FIREBASE_SERVICE_ACCOUNT_JSON env variable is missing');
+      // Only log this if we're actually trying to use it, not during build
+      if (process.env.NODE_ENV === 'production') {
+        console.error('FIREBASE_SERVICE_ACCOUNT_JSON env variable is missing');
+      }
     }
   } catch (error) {
     console.error('Firebase admin initialization error:', error);
   }
+  return false;
 }
 
 export const sendPushNotification = async (tokens: string[], title: string, body: string, data?: any) => {
-  const isInitialized = admin.apps.length > 0;
+  const isInitialized = initializeFirebase();
 
   // Filter out empty, null or invalid tokens
   const validTokens = (tokens || []).filter(t => t && typeof t === 'string' && t.trim() !== '');
