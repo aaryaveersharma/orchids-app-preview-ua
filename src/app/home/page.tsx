@@ -83,27 +83,27 @@ export default function HomePage() {
               animate={{ x: 0, opacity: 1 }}
               className="flex items-center gap-3"
             >
-              <div className="p-2 bg-primary rounded-xl rotate-3">
+              <div className="p-2 bg-primary rounded-full rotate-3">
                 <Image
                   src={getAssetPath('/hashtag-logo.png')}
                   alt="Hashtag Garage"
-                  width={32}
-                  height={32}
-                  className="rounded-lg invert"
+                  width={28}
+                  height={28}
+                  className="rounded-full invert"
                   priority
                   unoptimized
                 />
               </div>
-              <h1 className="text-2xl font-black tracking-tighter text-black">HASHTAG <span className="text-primary">GARAGE</span></h1>
+              <h1 className="text-xl font-black tracking-tighter text-black">HASHTAG <span className="text-primary">GARAGE</span></h1>
             </motion.div>
 
             <motion.a
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               href="tel:+918889822220"
-              className="w-12 h-12 glass-card rounded-2xl flex items-center justify-center hover:bg-primary group transition-colors"
+              className="w-10 h-10 glass-card rounded-full flex items-center justify-center hover:bg-primary group transition-colors"
             >
-              <Phone className="w-5 h-5 text-black group-hover:text-white transition-colors" />
+              <Phone className="w-4 h-4 text-black group-hover:text-white transition-colors" />
             </motion.a>
           </div>
 
@@ -113,7 +113,7 @@ export default function HomePage() {
             transition={{ delay: 0.2 }}
             className="mb-8"
           >
-            <h2 className="text-4xl font-black mb-2 leading-[0.9] text-black">
+            <h2 className="text-2xl font-black mb-2 leading-[1.1] text-black uppercase tracking-tighter">
               PRIME CAR CARE <br />
               <span className="gradient-text">REDEFINED.</span>
             </h2>
@@ -171,7 +171,7 @@ export default function HomePage() {
               className="flex flex-col items-center gap-3"
             >
               <div
-                className="w-full aspect-square rounded-3xl glass-card flex items-center justify-center group hover:bg-primary transition-all duration-500"
+                className="w-full aspect-square rounded-full glass-card flex items-center justify-center group hover:bg-primary transition-all duration-500"
               >
                 <div className="text-black group-hover:text-white group-hover:scale-110 transition-all">
                   {categoryIcons[category.id] || categoryIcons['general']}
@@ -197,19 +197,19 @@ export default function HomePage() {
 
           <div className="flex items-start justify-between relative z-10">
             <div className="flex gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center p-3 rotate-3 group-hover:rotate-0 transition-transform">
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center p-2 rotate-3 group-hover:rotate-0 transition-transform">
                 <Image
                   src={getAssetPath('/hashtag-logo.png')}
                   alt="Hashtag Garage Workshop"
-                  width={60}
-                  height={60}
-                  className="rounded-lg invert"
+                  width={50}
+                  height={50}
+                  className="rounded-full invert"
                   unoptimized
                 />
               </div>
               <div>
-                <h3 className="text-xl font-black text-black leading-tight">THE WORKSHOP</h3>
-                <p className="text-xs text-black/50 mb-3 uppercase tracking-widest">Kota, Raipur</p>
+                <h3 className="text-lg font-black text-black leading-tight uppercase">THE WORKSHOP</h3>
+                <p className="text-[10px] text-black/50 mb-3 uppercase tracking-widest">Kota, Raipur</p>
                 <div className="flex items-center gap-3">
                   <span className="px-2 py-1 bg-green-500/10 text-green-500 text-[10px] font-black rounded-lg border border-green-500/20 uppercase tracking-tighter">Live & Open</span>
                 </div>
@@ -217,20 +217,20 @@ export default function HomePage() {
             </div>
             <button
               onClick={() => router.push('/services')}
-              className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center hover:bg-primary transition-colors group/btn"
+              className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-primary transition-colors group/btn shadow-sm"
             >
-              <ArrowRight className="w-5 h-5 text-black group-hover/btn:text-white transition-colors" />
+              <ArrowRight className="w-4 h-4 text-black group-hover/btn:text-white transition-colors" />
             </button>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-3 relative z-10">
+          <div className="mt-6 grid grid-cols-2 gap-3 relative z-10">
             {featuredServices.map((service) => (
               <button
                 key={service.id}
                 onClick={() => router.push(`/booking?service=${service.id}`)}
-                className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-left group/item"
+                className="flex items-center gap-3 p-2 rounded-full glass-card hover:bg-primary border border-gray-100 transition-all text-left group/item"
               >
-                <div className="w-10 h-10 rounded-xl overflow-hidden relative grayscale group-hover/item:grayscale-0 transition-all">
+                <div className="w-8 h-8 rounded-full overflow-hidden relative grayscale group-hover/item:grayscale-0 transition-all">
                   <Image
                     src={getAssetPath(service.image)}
                     alt={service.name}
@@ -239,7 +239,7 @@ export default function HomePage() {
                     unoptimized
                   />
                 </div>
-                <span className="text-[10px] font-bold text-black uppercase line-clamp-1 group-hover/item:text-white transition-colors">{service.name}</span>
+                <span className="text-[9px] font-bold text-black uppercase line-clamp-1 group-hover/item:text-white transition-colors">{service.name}</span>
               </button>
             ))}
           </div>
@@ -247,8 +247,8 @@ export default function HomePage() {
       </section>
 
       {/* All Services Staggered */}
-      <section className="px-6 mt-12">
-        <h2 className="text-2xl font-black text-black mb-6 tracking-tighter uppercase">Our Services</h2>
+      <section className="px-6 mt-10">
+        <h2 className="text-lg font-black text-black mb-4 tracking-tighter uppercase">Our Services</h2>
         <div className="space-y-4">
           {services.map((service, index) => (
             <motion.div
@@ -257,9 +257,9 @@ export default function HomePage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               onClick={() => router.push(`/booking?service=${service.id}`)}
-              className="glass-card rounded-3xl p-4 flex items-center gap-4 cursor-pointer hover:border-primary/50 transition-all group"
+              className="glass-card rounded-full p-2 pr-6 flex items-center gap-4 cursor-pointer hover:border-primary/50 transition-all group"
             >
-              <div className="relative w-20 h-20 flex-shrink-0 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="relative w-14 h-14 flex-shrink-0 rounded-full overflow-hidden shadow-2xl">
                 <Image
                   src={getAssetPath(service.image)}
                   alt={service.name}
@@ -271,8 +271,8 @@ export default function HomePage() {
               </div>
 
               <div className="flex-1">
-                <h3 className="text-lg font-black text-black leading-tight uppercase tracking-tight">{service.name}</h3>
-                <p className="text-[10px] text-black/40 font-bold uppercase tracking-widest mb-2">{service.subtitle}</p>
+                <h3 className="text-sm font-black text-black leading-tight uppercase tracking-tight">{service.name}</h3>
+                <p className="text-[9px] text-black/40 font-bold uppercase tracking-widest mb-1">{service.subtitle}</p>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-black text-primary">
                     {!pricesLoaded ? '---' : (() => { const p = getPrice(service.id, service.price); return p > 0 ? `₹${p.toLocaleString('en-IN')}` : service.priceLabel || 'QUOTATION'; })()}

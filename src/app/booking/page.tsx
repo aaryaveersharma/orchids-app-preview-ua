@@ -202,10 +202,10 @@ function BookingContent() {
         <div className="mobile-container min-h-screen safe-bottom pb-12">
             <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-black/5">
                 <div className="flex items-center gap-4">
-                    <button onClick={() => router.back()} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary group transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-black group-hover:text-white transition-colors" />
+                    <button onClick={() => router.back()} className="w-9 h-9 glass-card rounded-full flex items-center justify-center hover:bg-primary group transition-colors">
+                        <ArrowLeft className="w-4 h-4 text-black group-hover:text-white transition-colors" />
                     </button>
-                    <h1 className="text-2xl font-black text-black tracking-tight uppercase">Reservation</h1>
+                    <h1 className="text-lg font-black text-black tracking-tight uppercase">Reservation</h1>
                 </div>
             </header>
 
@@ -392,7 +392,7 @@ function BookingContent() {
                     </motion.div>
                 )}
 
-                <button onClick={handleProceed} className="w-full bg-black text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-primary transition-all flex items-center justify-center gap-3 group">
+                <button onClick={handleProceed} className="w-full bg-black text-white py-4 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-primary transition-all flex items-center justify-center gap-3 group">
                     Next Phase <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>

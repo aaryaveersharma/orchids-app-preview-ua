@@ -98,19 +98,20 @@ export default function SignupPage() {
   };
 
   const Logo = () => (
-    <div className="flex flex-col items-center mb-8">
-      <div className="relative w-[80px] h-[80px] flex items-center justify-center">
+    <div className="flex flex-col items-center mb-6">
+      <div className="relative w-[70px] h-[70px] flex items-center justify-center">
+        <div className="absolute inset-0 bg-primary rounded-full" />
         <Image
           src={getAssetPath('/hashtag-logo.png')}
           alt="Hashtag Garage"
-          width={80}
-          height={80}
-          className="rounded-xl shadow-md object-cover"
+          width={60}
+          height={60}
+          className="rounded-full shadow-md object-cover relative z-10 invert"
           priority
           unoptimized
         />
       </div>
-      <h1 className="text-xl font-bold text-black mt-4">
+      <h1 className="text-lg font-bold text-black mt-3">
         HASHTAG <span className="text-primary">GARAGE</span>
       </h1>
     </div>
@@ -138,12 +139,12 @@ export default function SignupPage() {
       <Logo />
       <SignupCarousel />
 
-      <h2 className="text-2xl font-bold text-black mb-1">Join Hashtag Garage</h2>
-      <p className="text-gray-500 text-sm mb-6">Enter your email to get started instantly</p>
+      <h2 className="text-xl font-bold text-black mb-1">Join Hashtag Garage</h2>
+      <p className="text-gray-500 text-xs mb-6 uppercase tracking-widest font-bold">Enter your email to get started instantly</p>
 
-      <form onSubmit={handleCreateAccount} className="flex flex-col gap-4">
+      <form onSubmit={handleCreateAccount} className="flex flex-col gap-3">
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-1.5 block">Full Name</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1.5 block">Full Name</label>
           <input
             type="text"
             value={name}

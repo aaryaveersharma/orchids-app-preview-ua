@@ -43,14 +43,14 @@ function ServicesContent() {
   return (
     <main className="mobile-container min-h-screen safe-bottom pb-10">
       <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-white/5">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-4 mb-4">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary group transition-colors"
+            className="w-9 h-9 glass-card rounded-full flex items-center justify-center hover:bg-primary group transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-black group-hover:text-white transition-colors" />
+            <ArrowLeft className="w-4 h-4 text-black group-hover:text-white transition-colors" />
           </button>
-          <h1 className="text-2xl font-black text-black tracking-tight uppercase">Services</h1>
+          <h1 className="text-lg font-black text-black tracking-tight uppercase">Services</h1>
         </div>
 
         <div className="relative mb-6">
@@ -109,7 +109,7 @@ function ServicesContent() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
                 onClick={() => router.push(`/booking?service=${service.id}`)}
-                className="glass-card rounded-[2rem] overflow-hidden cursor-pointer hover:border-primary/50 transition-all group"
+                className="glass-card rounded-[2.5rem] overflow-hidden cursor-pointer hover:border-primary/50 transition-all group"
               >
                 <div className="relative h-48 w-full overflow-hidden">
                     <Image
@@ -125,14 +125,14 @@ function ServicesContent() {
                     </div>
                 </div>
 
-                <div className="p-6 relative">
-                  <div className="flex justify-between items-start mb-4">
+                <div className="p-5 relative">
+                  <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="text-xl font-black text-black uppercase tracking-tight leading-none mb-1">{service.name}</h3>
-                      <p className="text-[10px] text-black/40 font-bold uppercase tracking-widest">{service.subtitle}</p>
+                      <h3 className="text-base font-black text-black uppercase tracking-tight leading-none mb-1">{service.name}</h3>
+                      <p className="text-[9px] text-black/40 font-bold uppercase tracking-widest">{service.subtitle}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-black text-primary leading-none">
+                      <p className="text-sm font-black text-primary leading-none">
                         {!pricesLoaded ? '---' : (() => { const p = getPrice(service.id, service.price); return p > 0 ? `₹${p.toLocaleString('en-IN')}` : service.priceLabel || 'QUOTATION'; })()}
                       </p>
                     </div>
@@ -146,7 +146,7 @@ function ServicesContent() {
                     ))}
                   </div>
 
-                  <button className="w-full py-3.5 rounded-2xl bg-black text-white text-xs font-black uppercase tracking-widest group-hover:bg-primary transition-all flex items-center justify-center gap-2">
+                  <button className="w-full py-3.5 rounded-full bg-black text-white text-xs font-black uppercase tracking-widest group-hover:bg-primary transition-all flex items-center justify-center gap-2">
                     Book Experience <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>

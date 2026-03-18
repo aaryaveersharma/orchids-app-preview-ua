@@ -85,8 +85,17 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-[14px];
     font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Syne', sans-serif;

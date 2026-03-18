@@ -42,12 +42,12 @@ export default function AboutPage() {
 
   return (
     <main className="mobile-container bg-gray-50 min-h-screen safe-bottom">
-      <header className="bg-white px-4 py-4 sticky top-0 z-10 border-b border-gray-100">
+      <header className="bg-white px-4 py-3 sticky top-0 z-10 border-b border-gray-100">
         <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2">
-            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          <button onClick={() => router.back()} className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center -ml-1">
+            <ArrowLeft className="w-4 h-4 text-gray-700" />
           </button>
-          <h1 className="text-lg font-bold text-gray-900">About Us</h1>
+          <h1 className="text-base font-bold text-gray-900 uppercase tracking-tight">About Us</h1>
         </div>
       </header>
 
@@ -57,15 +57,17 @@ export default function AboutPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl p-6 shadow-sm text-center mb-6"
         >
-            <Image
-              src={getAssetPath('/hashtag-logo.png')}
-              alt="Hashtag Garage"
-              width={100}
-              height={100}
-              className="rounded-xl mx-auto mb-4"
-            />
+            <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
+                <Image
+                src={getAssetPath('/hashtag-logo.png')}
+                alt="Hashtag Garage"
+                width={70}
+                height={70}
+                className="invert object-contain"
+                />
+            </div>
 
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-lg font-black text-gray-900 uppercase">
             HASHTAG <span className="text-primary">GARAGE</span>
           </h2>
           <p className="text-sm text-primary font-medium mt-1">

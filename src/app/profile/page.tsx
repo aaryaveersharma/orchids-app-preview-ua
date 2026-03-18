@@ -92,24 +92,24 @@ export default function ProfilePage() {
     <div className="mobile-container min-h-screen safe-bottom pb-12">
       <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-black/5">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.push('/home')} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary group transition-colors">
-            <ArrowLeft className="w-5 h-5 text-black group-hover:text-white transition-colors" />
+          <button onClick={() => router.push('/home')} className="w-9 h-9 glass-card rounded-full flex items-center justify-center hover:bg-primary group transition-colors">
+            <ArrowLeft className="w-4 h-4 text-black group-hover:text-white transition-colors" />
           </button>
-          <h1 className="text-2xl font-black text-black tracking-tight uppercase">Pilot Profile</h1>
+          <h1 className="text-lg font-black text-black tracking-tight uppercase">Pilot Profile</h1>
         </div>
       </header>
 
-      <div className="px-6 py-8 space-y-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden group">
+      <div className="px-6 py-6 space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-[2.5rem] p-6 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
-            <div className="flex items-center gap-6 relative z-10">
-              <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center border border-primary/20 group-hover:rotate-6 transition-transform">
-                <span className="text-3xl font-black text-primary">
+            <div className="flex items-center gap-5 relative z-10">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 group-hover:rotate-6 transition-transform">
+                <span className="text-2xl font-black text-primary">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-black text-black uppercase tracking-tight leading-none mb-2">{user.name}</h2>
+                <h2 className="text-lg font-black text-black uppercase tracking-tight leading-none mb-1">{user.name}</h2>
                 <div className="inline-flex items-center gap-2 px-2 py-1 bg-black/5 rounded-lg border border-black/5">
                     <span className="text-[8px] font-black text-black/30 uppercase tracking-widest">User ID:</span>
                     <span className="text-[8px] font-black text-primary tracking-widest">{user.displayId}</span>
@@ -129,7 +129,7 @@ export default function ProfilePage() {
                 <ChevronRight className="w-4 h-4 text-black/10 ml-auto group-hover/item:text-primary transition-colors" />
               </div>
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 glass-card rounded-full flex items-center justify-center">
                   <Mail className="w-5 h-5 text-black" />
                 </div>
                 <div>
@@ -152,30 +152,30 @@ export default function ProfilePage() {
         <div className="space-y-4">
           <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] px-1">Control Center</h3>
           <div className="space-y-3">
-            <button onClick={() => toast.info('System update pending')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
-              <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
+            <button onClick={() => toast.info('System update pending')} className="w-full flex items-center gap-4 p-4 glass-card rounded-full hover:bg-white/5 transition-all group">
+              <div className="w-9 h-9 glass-card rounded-full flex items-center justify-center group-hover:bg-primary transition-all">
                 <User className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
               <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Edit Manifest</span>
               <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
-            <button onClick={openPinModal} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
-              <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
+            <button onClick={openPinModal} className="w-full flex items-center gap-4 p-4 glass-card rounded-full hover:bg-white/5 transition-all group">
+              <div className="w-9 h-9 glass-card rounded-full flex items-center justify-center group-hover:bg-primary transition-all">
                 <KeyRound className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
               <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Reset Pin Code</span>
               <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
             <NotificationToggle />
-            <button onClick={handleLogout} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-red-500/10 transition-all group">
-              <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center group-hover:bg-red-500 transition-all">
+            <button onClick={handleLogout} className="w-full flex items-center gap-4 p-4 glass-card rounded-full hover:bg-red-500/10 transition-all group">
+              <div className="w-9 h-9 bg-red-500/10 rounded-full flex items-center justify-center group-hover:bg-red-500 transition-all">
                 <LogOut className="w-5 h-5 text-red-500 group-hover:text-white" />
               </div>
               <span className="flex-1 text-left text-[10px] font-black text-red-500 uppercase tracking-widest">Abort Session</span>
               <ChevronRight className="w-4 h-4 text-red-500/20" />
             </button>
-            <button onClick={() => router.push('/profile/delete-account')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-red-500/10 transition-all group border-dashed border-red-500/20">
-              <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center group-hover:bg-red-500 transition-all">
+            <button onClick={() => router.push('/profile/delete-account')} className="w-full flex items-center gap-4 p-4 glass-card rounded-full hover:bg-red-500/10 transition-all group border-dashed border-red-500/20">
+              <div className="w-9 h-9 bg-red-500/10 rounded-full flex items-center justify-center group-hover:bg-red-500 transition-all">
                 <Trash2 className="w-5 h-5 text-red-500 group-hover:text-white" />
               </div>
               <span className="flex-1 text-left text-[10px] font-black text-red-500 uppercase tracking-widest">Purge Account</span>
@@ -187,22 +187,22 @@ export default function ProfilePage() {
         <div className="space-y-4">
           <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] px-1">Intelligence</h3>
           <div className="space-y-3">
-            <button onClick={() => router.push('/contact')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
-              <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
+            <button onClick={() => router.push('/contact')} className="w-full flex items-center gap-4 p-4 glass-card rounded-full hover:bg-white/5 transition-all group">
+              <div className="w-9 h-9 glass-card rounded-full flex items-center justify-center group-hover:bg-primary transition-all">
                 <HelpCircle className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
               <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Help Desk</span>
               <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
-            <button onClick={() => router.push('/about')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
-              <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
+            <button onClick={() => router.push('/about')} className="w-full flex items-center gap-4 p-4 glass-card rounded-full hover:bg-white/5 transition-all group">
+              <div className="w-9 h-9 glass-card rounded-full flex items-center justify-center group-hover:bg-primary transition-all">
                 <Info className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
               <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Mission Info</span>
               <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
-            <button onClick={() => router.push('/privacy-policy')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
-              <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
+            <button onClick={() => router.push('/privacy-policy')} className="w-full flex items-center gap-4 p-4 glass-card rounded-full hover:bg-white/5 transition-all group">
+              <div className="w-9 h-9 glass-card rounded-full flex items-center justify-center group-hover:bg-primary transition-all">
                 <Shield className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
               <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Security Protocol</span>
