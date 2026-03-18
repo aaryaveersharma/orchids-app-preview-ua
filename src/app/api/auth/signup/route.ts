@@ -22,18 +22,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 });
     }
     
-    const { name, email, phone, password, otpVerified } = data;
+    const { name, email, phone, password } = data;
 
-    if (!email || !password || !name || !phone) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!email || !name) {
+        return NextResponse.json({ error: 'Email and Name are required' }, { status: 400 });
     }
+
+    // Default password for simple auth if not provided
+    const finalPassword = password || '1234';
+    // Dummy phone if not provided, since schema requires it
+    const finalPhone = phone || email.split('@')[0].replace(/\D/g, '').slice(0, 10).padEnd(10, '0');
 
     // Create user and auto-confirm email
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
       email,
-      password: formatPinAsPassword(password),
+      password: formatPinAsPassword(finalPassword),
       email_confirm: true,
-      user_metadata: { full_name: name, phone: phone }
+      user_metadata: { full_name: name, phone: finalPhone }
     });
 
     if (userError) {
@@ -55,8 +60,8 @@ export async function POST(request: Request) {
             id: userData.user.id,
             email,
             full_name: name,
-            phone: phone,
-            verified: otpVerified === true ? true : false,
+            phone: finalPhone,
+            verified: true,
             blocked: false,
             updated_at: new Date().toISOString()
           }
@@ -64,7 +69,6 @@ export async function POST(request: Request) {
 
     if (profileError) {
       console.error('Profile Creation Error:', profileError);
-      // Even if profile fails, user is created. But we should try to handle it.
       return NextResponse.json({ error: 'User created but profile setup failed' }, { status: 500 });
     }
 
@@ -74,7 +78,7 @@ export async function POST(request: Request) {
         id: userData.user.id,
         email: email,
         name: name,
-        phone: phone
+        phone: finalPhone
       }
     });
   } catch (error: any) {

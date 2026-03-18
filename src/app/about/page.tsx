@@ -58,15 +58,15 @@ export default function AboutPage() {
           className="bg-white rounded-2xl p-6 shadow-sm text-center mb-6"
         >
             <Image
-              src={getAssetPath('/hastag-logo.png')}
-              alt="Hastag Cars"
+              src={getAssetPath('/hashtag-logo.png')}
+              alt="Hashtag Garage"
               width={100}
               height={100}
               className="rounded-xl mx-auto mb-4"
             />
 
           <h2 className="text-2xl font-bold text-gray-900">
-            URBAN <span className="text-primary">AUTO</span>
+            HASHTAG <span className="text-primary">GARAGE</span>
           </h2>
           <p className="text-sm text-primary font-medium mt-1">
             Designed for Premium Performance
@@ -82,10 +82,10 @@ export default function AboutPage() {
         >
           <h3 className="font-bold text-gray-900 mb-3">Our Story</h3>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Hastag Cars is Raipur&apos;s premier modern mechanized car care brand that is changing the way people think about vehicle maintenance. We believe that cars are more than just machines; they are an extension of your lifestyle.
+            Hashtag Garage is Raipur&apos;s premier modern mechanized car care brand that is changing the way people think about vehicle maintenance. We believe that cars are more than just machines; they are an extension of your lifestyle.
           </p>
           <p className="text-sm text-gray-600 leading-relaxed mt-3">
-            Every vehicle at Hastag Cars is pampered by trained technicians who treat your car with the same care they would their own. From basic cleaning to complex accidental repairs, we ensure quality at every step.
+            Every vehicle at Hashtag Garage is pampered by trained technicians who treat your car with the same care they would their own. From basic cleaning to complex accidental repairs, we ensure quality at every step.
           </p>
         </motion.div>
 
@@ -143,7 +143,7 @@ export default function AboutPage() {
             onClick={() => router.push('/contact')}
             className="w-full py-3 bg-white text-primary rounded-xl text-sm font-semibold"
           >
-            Contact Hastag Cars
+            Contact Hashtag Garage
           </button>
         </motion.div>
       </div>

@@ -132,8 +132,8 @@ function BookingItem({ booking, onCancel, onReschedule }: {
     >
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h3 className="text-lg font-black text-white uppercase tracking-tight leading-none mb-2">{booking.serviceName}</h3>
-          <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">{booking.vehicleType}</p>
+          <h3 className="text-lg font-black text-black uppercase tracking-tight leading-none mb-2">{booking.serviceName}</h3>
+          <p className="text-[10px] font-black text-black/30 uppercase tracking-widest">{booking.vehicleType}</p>
         </div>
         <span className={`px-3 py-1 rounded-xl text-[8px] font-black uppercase tracking-widest border ${getStatusColor(booking.status)}`}>
           {isRescheduleConfirmed ? 'Reschedule Active' : booking.status}
@@ -145,16 +145,16 @@ function BookingItem({ booking, onCancel, onReschedule }: {
           <div className="w-8 h-8 glass-card rounded-lg flex items-center justify-center">
             <Calendar className="w-4 h-4 text-primary" />
           </div>
-          <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{booking.preferredDateTime}</span>
+          <span className="text-[10px] font-black text-black/60 uppercase tracking-widest">{booking.preferredDateTime}</span>
         </div>
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 glass-card rounded-lg flex items-center justify-center flex-shrink-0">
             <MapPin className="w-4 h-4 text-primary" />
           </div>
-          <span className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-relaxed line-clamp-2">{booking.address}</span>
+          <span className="text-[10px] font-black text-black/40 uppercase tracking-widest leading-relaxed line-clamp-2">{booking.address}</span>
         </div>
         <div className="flex items-center gap-3 pt-2">
-            <div className="px-3 py-1.5 bg-white text-black rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+            <div className="px-3 py-1.5 bg-black text-white rounded-lg text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
                 <IndianRupee className="w-3 h-3" />
                 {(booking.totalAmount && booking.totalAmount > 0) ? booking.totalAmount.toLocaleString('en-IN') : 'QUOTATION'}
             </div>
@@ -173,13 +173,13 @@ function BookingItem({ booking, onCancel, onReschedule }: {
           <div className="flex gap-3">
             <button
               onClick={() => onReschedule(booking)}
-              className="flex-1 py-3 bg-white text-black rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl shadow-white/5"
+              className="flex-1 py-3 bg-black text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary transition-all shadow-xl shadow-black/5"
             >
               Reschedule
             </button>
             <button
               onClick={() => onCancel(booking.id)}
-              className="flex-1 py-3 glass-card text-white/40 rounded-xl text-[9px] font-black uppercase tracking-widest hover:text-red-500 transition-all"
+              className="flex-1 py-3 glass-card text-black/40 rounded-xl text-[9px] font-black uppercase tracking-widest hover:text-red-500 transition-all"
             >
               Cancel
             </button>
@@ -190,7 +190,7 @@ function BookingItem({ booking, onCancel, onReschedule }: {
       {booking.status === 'Confirmed' && !canReschedule && (
         <button
           onClick={() => onCancel(booking.id)}
-          className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-500/10 transition-all mt-4"
+          className="w-full py-4 rounded-2xl bg-black/5 border border-black/5 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-500/10 transition-all mt-4"
         >
           Abort Mission
         </button>
@@ -229,12 +229,12 @@ export default function BookingsPage() {
 
   return (
     <div className="mobile-container min-h-screen safe-bottom pb-24">
-      <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-white/5">
+      <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-black/5">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.push('/home')} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
-            <ArrowLeft className="w-5 h-5 text-white" />
+          <button onClick={() => router.push('/home')} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary group transition-colors">
+            <ArrowLeft className="w-5 h-5 text-black group-hover:text-white transition-colors" />
           </button>
-          <h1 className="text-2xl font-black text-white tracking-tight uppercase">Mission Logs</h1>
+          <h1 className="text-2xl font-black text-black tracking-tight uppercase">Mission Logs</h1>
         </div>
       </header>
 
@@ -242,13 +242,13 @@ export default function BookingsPage() {
         {sortedBookings.length === 0 ? (
           <div className="text-center py-24">
             <div className="w-24 h-24 glass-card rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border-dashed">
-              <Calendar className="w-10 h-10 text-white/10" />
+              <Calendar className="w-10 h-10 text-black/10" />
             </div>
-            <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2">No active missions</h3>
-            <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest mb-10 px-10">Your operational history is currently empty.</p>
+            <h3 className="text-xl font-black text-black uppercase tracking-tight mb-2">No active missions</h3>
+            <p className="text-[10px] text-black/30 font-bold uppercase tracking-widest mb-10 px-10">Your operational history is currently empty.</p>
             <button
               onClick={() => router.push('/home')}
-              className="w-full bg-white text-black py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-primary hover:text-white transition-all shadow-2xl shadow-white/5 flex items-center justify-center gap-3"
+              className="w-full bg-black text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-primary transition-all shadow-2xl shadow-black/5 flex items-center justify-center gap-3"
             >
               Start Mission <ChevronRight className="w-5 h-5" />
             </button>

@@ -200,12 +200,12 @@ function BookingContent() {
 
     return (
         <div className="mobile-container min-h-screen safe-bottom pb-12">
-            <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-white/5">
+            <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-black/5">
                 <div className="flex items-center gap-4">
-                    <button onClick={() => router.back()} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-white" />
+                    <button onClick={() => router.back()} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary group transition-colors">
+                        <ArrowLeft className="w-5 h-5 text-black group-hover:text-white transition-colors" />
                     </button>
-                    <h1 className="text-2xl font-black text-white tracking-tight uppercase">Reservation</h1>
+                    <h1 className="text-2xl font-black text-black tracking-tight uppercase">Reservation</h1>
                 </div>
             </header>
 
@@ -214,15 +214,15 @@ function BookingContent() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-[2rem] overflow-hidden">
                         <div className="relative h-44 w-full">
                             <Image src={getAssetPath(mainService.image)} alt={mainService.name} fill className="object-cover" unoptimized />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                             <div className="absolute bottom-6 left-6 right-6">
                                 <h2 className="text-2xl font-black text-white uppercase tracking-tight">{mainService.name}</h2>
-                                <p className="text-[10px] text-white/50 font-black uppercase tracking-widest">{mainService.subtitle}</p>
+                                <p className="text-[10px] text-white/70 font-black uppercase tracking-widest">{mainService.subtitle}</p>
                             </div>
                         </div>
                         <div className="p-6 flex flex-wrap gap-2">
                             {mainService.features.map((f, i) => (
-                                <span key={i} className="px-2.5 py-1 bg-white/5 text-white/40 text-[9px] font-black rounded-lg border border-white/5 uppercase tracking-tighter">{f}</span>
+                                <span key={i} className="px-2.5 py-1 bg-black/5 text-black/40 text-[9px] font-black rounded-lg border border-black/5 uppercase tracking-tighter">{f}</span>
                             ))}
                         </div>
                     </motion.div>
@@ -231,7 +231,7 @@ function BookingContent() {
                 <AnimatePresence>
                     {otherSelectedServices.length > 0 && (
                         <div className="space-y-3">
-                            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Added Expertise</h3>
+                            <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] px-1">Added Expertise</h3>
                             {otherSelectedServices.map(id => {
                                 const s = services.find(srv => srv.id === id);
                                 if (!s) return null;
@@ -242,7 +242,7 @@ function BookingContent() {
                                                 <Image src={getAssetPath(s.image)} alt={s.name} fill className="object-cover" unoptimized />
                                             </div>
                                             <div>
-                                                <h4 className="text-sm font-black text-white uppercase tracking-tight">{s.name}</h4>
+                                                <h4 className="text-sm font-black text-black uppercase tracking-tight">{s.name}</h4>
                                                 <p className="text-[10px] font-black text-primary uppercase">{getPriceLabel(s.id)}</p>
                                             </div>
                                         </div>
@@ -259,11 +259,11 @@ function BookingContent() {
                 <div className="glass-card rounded-[2rem] p-6 space-y-6">
                     <div onClick={() => setShowServiceList(!showServiceList)} className="flex items-center justify-between cursor-pointer group">
                         <div>
-                            <h3 className="text-lg font-black text-white uppercase tracking-tight leading-none mb-1">Scale your service</h3>
-                            <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Select additional expert modules</p>
+                            <h3 className="text-lg font-black text-black uppercase tracking-tight leading-none mb-1">Scale your service</h3>
+                            <p className="text-[10px] text-black/40 font-bold uppercase tracking-widest">Select additional expert modules</p>
                         </div>
-                        <div className={cn("w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center transition-all group-hover:bg-primary", showServiceList && "bg-primary rotate-45")}>
-                            <Plus className="w-5 h-5 text-white" />
+                        <div className={cn("w-10 h-10 rounded-2xl bg-black/5 flex items-center justify-center transition-all group-hover:bg-primary group", showServiceList && "bg-primary rotate-45")}>
+                            <Plus className={cn("w-5 h-5 text-black group-hover:text-white transition-colors", showServiceList && "text-white")} />
                         </div>
                     </div>
 
@@ -273,7 +273,7 @@ function BookingContent() {
                                 <div className="grid grid-cols-2 gap-3 pt-4">
                                     {services.filter(s => !selectedServices.includes(s.id)).map((s) => (
                                         <button key={s.id} onClick={() => toggleService(s.id)} className="p-4 rounded-[1.5rem] glass-card text-left hover:border-primary/50 transition-all group/s">
-                                            <p className="text-[10px] font-black text-white uppercase tracking-tight mb-1">{s.name}</p>
+                                            <p className="text-[10px] font-black text-black uppercase tracking-tight mb-1">{s.name}</p>
                                             <p className="text-[9px] font-black text-primary uppercase">{getPriceLabel(s.id)}</p>
                                         </button>
                                     ))}
@@ -284,15 +284,15 @@ function BookingContent() {
                 </div>
 
                 <div className="glass-card rounded-[2rem] p-8 space-y-8">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                    <h3 className="text-xl font-black text-black uppercase tracking-tight flex items-center gap-3">
                         <Car className="w-6 h-6 text-primary" /> Vehicle Config
                     </h3>
 
                     <div>
-                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-4">Segment *</p>
+                        <p className="text-[10px] font-black text-black/30 uppercase tracking-widest mb-4">Segment *</p>
                         <div className="grid grid-cols-2 gap-3">
                             {vehicleTypes.map((type) => (
-                                <button key={type} onClick={() => setVehicleType(type)} className={cn("py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all", vehicleType === type ? "bg-primary text-white shadow-xl shadow-primary/20" : "glass-card text-white/40 hover:text-white")}>
+                                <button key={type} onClick={() => setVehicleType(type)} className={cn("py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all", vehicleType === type ? "bg-primary text-white shadow-xl shadow-primary/20" : "glass-card text-black/40 hover:text-black hover:border-black/20")}>
                                     {type}
                                 </button>
                             ))}
@@ -301,47 +301,47 @@ function BookingContent() {
 
                     <div className="space-y-6">
                         <div className="relative">
-                            <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Make & Model *</p>
-                            <input type="text" value={vehicleMakeModel} onChange={(e) => setVehicleMakeModel(e.target.value)} placeholder="E.G. BMW M3 GTR" className="w-full px-6 py-4 rounded-2xl glass-card text-white text-sm font-black uppercase placeholder:text-white/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
+                            <p className="text-[10px] font-black text-black/30 uppercase tracking-widest mb-3">Make & Model *</p>
+                            <input type="text" value={vehicleMakeModel} onChange={(e) => setVehicleMakeModel(e.target.value)} placeholder="E.G. BMW M3 GTR" className="w-full px-6 py-4 rounded-2xl glass-card text-black text-sm font-black uppercase placeholder:text-black/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
                         </div>
                         <div className="relative">
-                            <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Identity Tag</p>
-                            <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder="E.G. CG 04 AB 1234" className="w-full px-6 py-4 rounded-2xl glass-card text-white text-sm font-black uppercase placeholder:text-white/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
+                            <p className="text-[10px] font-black text-black/30 uppercase tracking-widest mb-3">Identity Tag</p>
+                            <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder="E.G. CG 04 AB 1234" className="w-full px-6 py-4 rounded-2xl glass-card text-black text-sm font-black uppercase placeholder:text-black/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
                         </div>
                     </div>
                 </div>
 
                 <div className="glass-card rounded-[2rem] p-8 space-y-8">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                    <h3 className="text-xl font-black text-black uppercase tracking-tight flex items-center gap-3">
                         <Truck className="w-6 h-6 text-primary" /> Service Mode
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
-                        <button onClick={() => setServiceMode('Pickup & Drop')} className={cn("p-6 rounded-[2rem] flex flex-col items-center gap-4 transition-all", serviceMode === 'Pickup & Drop' ? "bg-primary text-white shadow-2xl shadow-primary/20" : "glass-card text-white/40 hover:text-white hover:bg-white/5")}>
+                        <button onClick={() => setServiceMode('Pickup & Drop')} className={cn("p-6 rounded-[2rem] flex flex-col items-center gap-4 transition-all", serviceMode === 'Pickup & Drop' ? "bg-primary text-white shadow-2xl shadow-primary/20" : "glass-card text-black/40 hover:text-black hover:bg-black/5")}>
                             <Truck className="w-8 h-8" />
                             <p className="text-[10px] font-black uppercase tracking-widest">Pickup & Drop</p>
                         </button>
-                        <button onClick={() => canHomeService ? setServiceMode('Home Service') : toast.error('Only for Detailing/Servicing')} className={cn("p-6 rounded-[2rem] flex flex-col items-center gap-4 transition-all", serviceMode === 'Home Service' ? "bg-primary text-white shadow-2xl shadow-primary/20" : "glass-card text-white/40 hover:text-white hover:bg-white/5", !canHomeService && "opacity-20 grayscale cursor-not-allowed")}>
+                        <button onClick={() => canHomeService ? setServiceMode('Home Service') : toast.error('Only for Detailing/Servicing')} className={cn("p-6 rounded-[2rem] flex flex-col items-center gap-4 transition-all", serviceMode === 'Home Service' ? "bg-primary text-white shadow-2xl shadow-primary/20" : "glass-card text-black/40 hover:text-black hover:bg-black/5", !canHomeService && "opacity-20 grayscale cursor-not-allowed")}>
                             <Home className="w-8 h-8" />
                             <p className="text-[10px] font-black uppercase tracking-widest">Home Service</p>
                         </button>
                     </div>
-                    {!canHomeService && <p className="text-[10px] text-white/20 font-bold text-center uppercase tracking-tighter">Home service restricted to specific categories</p>}
+                    {!canHomeService && <p className="text-[10px] text-black/20 font-bold text-center uppercase tracking-tighter">Home service restricted to specific categories</p>}
                 </div>
 
                 <div className="glass-card rounded-[2rem] p-8 space-y-8">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                    <h3 className="text-xl font-black text-black uppercase tracking-tight flex items-center gap-3">
                         <Calendar className="w-6 h-6 text-primary" /> Scheduling
                     </h3>
 
                     <div className="relative">
-                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Launch Date *</p>
-                        <input type="date" value={date} min={getISTDate()} onChange={(e) => { setDate(e.target.value); setTime(''); }} className="w-full px-6 py-4 rounded-2xl glass-card text-white text-sm font-black outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
+                        <p className="text-[10px] font-black text-black/30 uppercase tracking-widest mb-3">Launch Date *</p>
+                        <input type="date" value={date} min={getISTDate()} onChange={(e) => { setDate(e.target.value); setTime(''); }} className="w-full px-6 py-4 rounded-2xl glass-card text-black text-sm font-black outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
                     </div>
 
                     <AnimatePresence>
                         {date && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-                                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">Select Mission Window</p>
+                                <p className="text-[10px] font-black text-black/30 uppercase tracking-widest">Select Mission Window</p>
                                 {loadingSlots ? (
                                     <div className="flex justify-center py-10"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>
                                 ) : (
@@ -357,12 +357,12 @@ function BookingContent() {
                                             if (groupSlots.length === 0) return null;
                                             return (
                                                 <div key={group}>
-                                                    <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] mb-4 border-l-2 border-primary/20 pl-3">{group}</p>
+                                                    <p className="text-[9px] font-black text-black/20 uppercase tracking-[0.3em] mb-4 border-l-2 border-primary/20 pl-3">{group}</p>
                                                     <div className="grid grid-cols-3 gap-3">
                                                         {groupSlots.map(slot => {
                                                             const isOccupied = occupiedSlots.includes(slot);
                                                             return (
-                                                                <button key={slot} disabled={isOccupied} onClick={() => setTime(slot)} className={cn("py-4 rounded-2xl text-[10px] font-black uppercase transition-all", time === slot ? "bg-primary text-white shadow-xl shadow-primary/20" : isOccupied ? "opacity-10 cursor-not-allowed" : "glass-card text-white/40 hover:text-white")}>
+                                                                <button key={slot} disabled={isOccupied} onClick={() => setTime(slot)} className={cn("py-4 rounded-2xl text-[10px] font-black uppercase transition-all", time === slot ? "bg-primary text-white shadow-xl shadow-primary/20" : isOccupied ? "opacity-10 cursor-not-allowed" : "glass-card text-black/40 hover:text-black hover:border-black/20")}>
                                                                     {slot}
                                                                 </button>
                                                             );
@@ -379,20 +379,20 @@ function BookingContent() {
                 </div>
 
                 <div className="glass-card rounded-[2rem] p-8">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3 mb-6">
+                    <h3 className="text-xl font-black text-black uppercase tracking-tight flex items-center gap-3 mb-6">
                         <FileText className="w-6 h-6 text-primary" /> Flight Notes
                     </h3>
-                    <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="SPECIFIC MODULE REQUIREMENTS..." rows={3} className="w-full px-6 py-4 rounded-2xl glass-card text-white text-sm font-black uppercase placeholder:text-white/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all resize-none" />
+                    <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="SPECIFIC MODULE REQUIREMENTS..." rows={3} className="w-full px-6 py-4 rounded-2xl glass-card text-black text-sm font-black uppercase placeholder:text-black/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all resize-none" />
                 </div>
 
                 {selectedServices.length > 0 && vehicleType && (
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-card rounded-3xl p-6 flex items-center justify-between border-primary/20">
-                        <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">Total Estimation</span>
+                        <span className="text-[10px] font-black text-black/50 uppercase tracking-[0.2em]">Total Estimation</span>
                         {!pricesLoaded ? <Loader2 className="w-4 h-4 animate-spin text-primary" /> : <span className="text-2xl font-black text-primary tracking-tighter">{totalAmount > 0 ? `₹${totalAmount.toLocaleString('en-IN')}` : 'QUOTATION'}</span>}
                     </motion.div>
                 )}
 
-                <button onClick={handleProceed} className="w-full bg-white text-black py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-primary hover:text-white shadow-2xl shadow-white/5 transition-all flex items-center justify-center gap-3 group">
+                <button onClick={handleProceed} className="w-full bg-black text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-primary transition-all flex items-center justify-center gap-3 group">
                     Next Phase <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>

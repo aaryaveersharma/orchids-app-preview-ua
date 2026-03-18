@@ -74,7 +74,7 @@ export default function HomePage() {
   return (
     <main className="mobile-container min-h-screen safe-bottom pb-12">
       {/* Dynamic Hero Section */}
-      <header className="px-6 pt-10 pb-16 relative overflow-hidden">
+      <header className="px-6 pt-10 pb-16 relative overflow-hidden bg-black/5">
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-8">
@@ -85,8 +85,8 @@ export default function HomePage() {
             >
               <div className="p-2 bg-primary rounded-xl rotate-3">
                 <Image
-                  src={getAssetPath('/hastag-logo.png')}
-                  alt="Hastag Cars"
+                  src={getAssetPath('/hashtag-logo.png')}
+                  alt="Hashtag Garage"
                   width={32}
                   height={32}
                   className="rounded-lg invert"
@@ -94,16 +94,16 @@ export default function HomePage() {
                   unoptimized
                 />
               </div>
-              <h1 className="text-2xl font-black tracking-tighter text-white">HASTAG</h1>
+              <h1 className="text-2xl font-black tracking-tighter text-black">HASHTAG <span className="text-primary">GARAGE</span></h1>
             </motion.div>
 
             <motion.a
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               href="tel:+918889822220"
-              className="w-12 h-12 glass-card rounded-2xl flex items-center justify-center hover:bg-primary transition-colors"
+              className="w-12 h-12 glass-card rounded-2xl flex items-center justify-center hover:bg-primary group transition-colors"
             >
-              <Phone className="w-5 h-5 text-white" />
+              <Phone className="w-5 h-5 text-black group-hover:text-white transition-colors" />
             </motion.a>
           </div>
 
@@ -113,7 +113,7 @@ export default function HomePage() {
             transition={{ delay: 0.2 }}
             className="mb-8"
           >
-            <h2 className="text-4xl font-black mb-2 leading-[0.9] text-white">
+            <h2 className="text-4xl font-black mb-2 leading-[0.9] text-black">
               PRIME CAR CARE <br />
               <span className="gradient-text">REDEFINED.</span>
             </h2>
@@ -122,7 +122,7 @@ export default function HomePage() {
               onClick={() => setShowAddressForm(true)}
             >
               <MapPin className="w-3 h-3 text-primary" />
-              <span className="line-clamp-1 max-w-[200px] text-white/70">
+              <span className="line-clamp-1 max-w-[200px] text-black/70">
                 {user.locationAddress || 'Locate Garage'}
               </span>
             </div>
@@ -134,13 +134,13 @@ export default function HomePage() {
             transition={{ delay: 0.3 }}
             className="relative group"
           >
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black/30 group-focus-within:text-primary transition-colors" />
             <input
               type="text"
               placeholder="What does your car need?"
               onClick={() => router.push('/services')}
               readOnly
-              className="w-full pl-12 pr-4 py-4 rounded-2xl glass-card text-white text-sm placeholder:text-white/20 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
+              className="w-full pl-12 pr-4 py-4 rounded-2xl glass-card text-black text-sm placeholder:text-black/20 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
             />
           </motion.div>
         </div>
@@ -173,11 +173,11 @@ export default function HomePage() {
               <div
                 className="w-full aspect-square rounded-3xl glass-card flex items-center justify-center group hover:bg-primary transition-all duration-500"
               >
-                <div className="text-white group-hover:scale-110 transition-transform">
+                <div className="text-black group-hover:text-white group-hover:scale-110 transition-all">
                   {categoryIcons[category.id] || categoryIcons['general']}
                 </div>
               </div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-white/50">
+              <span className="text-[10px] font-black uppercase tracking-wider text-black/50">
                 {category.name}
               </span>
             </motion.button>
@@ -199,8 +199,8 @@ export default function HomePage() {
             <div className="flex gap-4">
               <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center p-3 rotate-3 group-hover:rotate-0 transition-transform">
                 <Image
-                  src={getAssetPath('/hastag-logo.png')}
-                  alt="Hastag Cars Workshop"
+                  src={getAssetPath('/hashtag-logo.png')}
+                  alt="Hashtag Garage Workshop"
                   width={60}
                   height={60}
                   className="rounded-lg invert"
@@ -208,8 +208,8 @@ export default function HomePage() {
                 />
               </div>
               <div>
-                <h3 className="text-xl font-black text-white leading-tight">THE WORKSHOP</h3>
-                <p className="text-xs text-white/50 mb-3 uppercase tracking-widest">Kota, Raipur</p>
+                <h3 className="text-xl font-black text-black leading-tight">THE WORKSHOP</h3>
+                <p className="text-xs text-black/50 mb-3 uppercase tracking-widest">Kota, Raipur</p>
                 <div className="flex items-center gap-3">
                   <span className="px-2 py-1 bg-green-500/10 text-green-500 text-[10px] font-black rounded-lg border border-green-500/20 uppercase tracking-tighter">Live & Open</span>
                 </div>
@@ -239,7 +239,7 @@ export default function HomePage() {
                     unoptimized
                   />
                 </div>
-                <span className="text-[10px] font-bold text-white uppercase line-clamp-1">{service.name}</span>
+                <span className="text-[10px] font-bold text-black uppercase line-clamp-1 group-hover/item:text-white transition-colors">{service.name}</span>
               </button>
             ))}
           </div>
@@ -248,7 +248,7 @@ export default function HomePage() {
 
       {/* All Services Staggered */}
       <section className="px-6 mt-12">
-        <h2 className="text-2xl font-black text-white mb-6 tracking-tighter uppercase">Our Services</h2>
+        <h2 className="text-2xl font-black text-black mb-6 tracking-tighter uppercase">Our Services</h2>
         <div className="space-y-4">
           {services.map((service, index) => (
             <motion.div
@@ -267,17 +267,17 @@ export default function HomePage() {
                   className="object-cover scale-110 group-hover:scale-100 transition-transform duration-500"
                   unoptimized
                 />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+                <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
               </div>
 
               <div className="flex-1">
-                <h3 className="text-lg font-black text-white leading-tight uppercase tracking-tight">{service.name}</h3>
-                <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-2">{service.subtitle}</p>
+                <h3 className="text-lg font-black text-black leading-tight uppercase tracking-tight">{service.name}</h3>
+                <p className="text-[10px] text-black/40 font-bold uppercase tracking-widest mb-2">{service.subtitle}</p>
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-black text-primary">
                     {!pricesLoaded ? '---' : (() => { const p = getPrice(service.id, service.price); return p > 0 ? `₹${p.toLocaleString('en-IN')}` : service.priceLabel || 'QUOTATION'; })()}
                   </p>
-                  <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-primary transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-black/20 group-hover:text-primary transition-colors" />
                 </div>
               </div>
             </motion.div>

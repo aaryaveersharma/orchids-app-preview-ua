@@ -21,7 +21,7 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-48px)] max-w-[380px] z-[45]">
-      <div className="glass-card rounded-[2rem] p-2 shadow-2xl shadow-black/50 border border-white/5">
+      <div className="glass-card rounded-[2rem] p-2 shadow-2xl shadow-black/10 border border-black/5">
         <div className="flex items-center justify-around h-16 relative">
           {tabs.map((tab) => {
             const isActive = pathname.startsWith(tab.href);
@@ -34,16 +34,16 @@ export default function BottomNav() {
                 {isActive && (
                   <motion.div
                     layoutId="nav-active"
-                    className="absolute inset-0 bg-primary/20 rounded-2xl blur-md"
+                    className="absolute inset-0 bg-primary/10 rounded-2xl blur-md"
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                 )}
 
                 <tab.icon 
-                  className={`w-5 h-5 mb-1 transition-all duration-500 relative z-10 ${isActive ? 'text-primary scale-110' : 'text-white/20 group-hover:text-white/40'}`}
+                  className={`w-5 h-5 mb-1 transition-all duration-500 relative z-10 ${isActive ? 'text-primary scale-110' : 'text-black/20 group-hover:text-black/40'}`}
                   strokeWidth={isActive ? 2.5 : 2}
                 />
-                <span className={`text-[8px] font-black uppercase tracking-widest relative z-10 transition-all duration-500 ${isActive ? 'text-white' : 'text-white/10 group-hover:text-white/20'}`}>
+                <span className={`text-[8px] font-black uppercase tracking-widest relative z-10 transition-all duration-500 ${isActive ? 'text-black' : 'text-black/20 group-hover:text-black/40'}`}>
                   {tab.label}
                 </span>
 

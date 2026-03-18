@@ -18,15 +18,15 @@ function NotificationToggle() {
   const handleEnable = async () => { await registerNotifications(); setShowModal(false); };
   return (
     <>
-      <button onClick={() => setShowModal(true)} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all">
+      <button onClick={() => setShowModal(true)} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-black/5 transition-all">
         <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
           <Bell className="w-5 h-5 text-primary" />
         </div>
         <div className="flex-1 text-left">
-          <span className="text-[10px] font-black text-white uppercase tracking-widest">Enable Notifications</span>
-          <p className="text-[8px] text-white/30 font-bold uppercase tracking-tighter">Stay updated with your bookings</p>
+          <span className="text-[10px] font-black text-black uppercase tracking-widest">Enable Notifications</span>
+          <p className="text-[8px] text-black/30 font-bold uppercase tracking-tighter">Stay updated with your bookings</p>
         </div>
-        <ChevronRight className="w-4 h-4 text-white/20" />
+        <ChevronRight className="w-4 h-4 text-black/20" />
       </button>
       <NotificationModal isOpen={showModal} onClose={() => setShowModal(false)} onEnable={handleEnable} />
     </>
@@ -90,12 +90,12 @@ export default function ProfilePage() {
 
   return (
     <div className="mobile-container min-h-screen safe-bottom pb-12">
-      <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-white/5">
+      <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-black/5">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.push('/home')} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
-            <ArrowLeft className="w-5 h-5 text-white" />
+          <button onClick={() => router.push('/home')} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary group transition-colors">
+            <ArrowLeft className="w-5 h-5 text-black group-hover:text-white transition-colors" />
           </button>
-          <h1 className="text-2xl font-black text-white tracking-tight uppercase">Pilot Profile</h1>
+          <h1 className="text-2xl font-black text-black tracking-tight uppercase">Pilot Profile</h1>
         </div>
       </header>
 
@@ -109,62 +109,62 @@ export default function ProfilePage() {
                 </span>
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-black text-white uppercase tracking-tight leading-none mb-2">{user.name}</h2>
-                <div className="inline-flex items-center gap-2 px-2 py-1 bg-white/5 rounded-lg border border-white/5">
-                    <span className="text-[8px] font-black text-white/30 uppercase tracking-widest">User ID:</span>
+                <h2 className="text-2xl font-black text-black uppercase tracking-tight leading-none mb-2">{user.name}</h2>
+                <div className="inline-flex items-center gap-2 px-2 py-1 bg-black/5 rounded-lg border border-black/5">
+                    <span className="text-[8px] font-black text-black/30 uppercase tracking-widest">User ID:</span>
                     <span className="text-[8px] font-black text-primary tracking-widest">{user.displayId}</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 pt-8 border-t border-white/5 space-y-6 relative z-10">
+            <div className="mt-8 pt-8 border-t border-black/5 space-y-6 relative z-10">
               <div className="flex items-center gap-4 group/item cursor-pointer" onClick={() => router.push('/wallet')}>
                 <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover/item:bg-primary transition-all">
-                  <Wallet className="w-5 h-5 text-white" />
+                  <Wallet className="w-5 h-5 text-black group-hover:text-white transition-colors" />
                 </div>
                 <div>
-                  <p className="text-[8px] font-black text-white/30 uppercase tracking-widest">Balance Reservoir</p>
+                  <p className="text-[8px] font-black text-black/30 uppercase tracking-widest">Balance Reservoir</p>
                   <p className="text-sm font-black text-primary tracking-tighter">₹{walletBalance.toLocaleString('en-IN')}</p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-white/10 ml-auto group-hover/item:text-primary transition-colors" />
+                <ChevronRight className="w-4 h-4 text-black/10 ml-auto group-hover/item:text-primary transition-colors" />
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-white" />
+                  <Mail className="w-5 h-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-[8px] font-black text-white/30 uppercase tracking-widest">Comms Interface</p>
-                  <p className="text-xs font-black text-white/60 tracking-tight lowercase">{user.email}</p>
+                  <p className="text-[8px] font-black text-black/30 uppercase tracking-widest">Comms Interface</p>
+                  <p className="text-xs font-black text-black/60 tracking-tight lowercase">{user.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-white" />
+                  <Phone className="w-5 h-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-[8px] font-black text-white/30 uppercase tracking-widest">Mobile Link</p>
-                  <p className="text-xs font-black text-white/60 tracking-tight">+91 {user.phone}</p>
+                  <p className="text-[8px] font-black text-black/30 uppercase tracking-widest">Mobile Link</p>
+                  <p className="text-xs font-black text-black/60 tracking-tight">+91 {user.phone}</p>
                 </div>
               </div>
             </div>
           </motion.div>
 
         <div className="space-y-4">
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Control Center</h3>
+          <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] px-1">Control Center</h3>
           <div className="space-y-3">
             <button onClick={() => toast.info('System update pending')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
               <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
-                <User className="w-5 h-5 text-white" />
+                <User className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
-              <span className="flex-1 text-left text-[10px] font-black text-white uppercase tracking-widest">Edit Manifest</span>
-              <ChevronRight className="w-4 h-4 text-white/20" />
+              <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Edit Manifest</span>
+              <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
             <button onClick={openPinModal} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
               <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
-                <KeyRound className="w-5 h-5 text-white" />
+                <KeyRound className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
-              <span className="flex-1 text-left text-[10px] font-black text-white uppercase tracking-widest">Reset Pin Code</span>
-              <ChevronRight className="w-4 h-4 text-white/20" />
+              <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Reset Pin Code</span>
+              <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
             <NotificationToggle />
             <button onClick={handleLogout} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-red-500/10 transition-all group">
@@ -185,35 +185,35 @@ export default function ProfilePage() {
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Intelligence</h3>
+          <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] px-1">Intelligence</h3>
           <div className="space-y-3">
             <button onClick={() => router.push('/contact')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
               <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
-                <HelpCircle className="w-5 h-5 text-white" />
+                <HelpCircle className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
-              <span className="flex-1 text-left text-[10px] font-black text-white uppercase tracking-widest">Help Desk</span>
-              <ChevronRight className="w-4 h-4 text-white/20" />
+              <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Help Desk</span>
+              <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
             <button onClick={() => router.push('/about')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
               <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
-                <Info className="w-5 h-5 text-white" />
+                <Info className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
-              <span className="flex-1 text-left text-[10px] font-black text-white uppercase tracking-widest">Mission Info</span>
-              <ChevronRight className="w-4 h-4 text-white/20" />
+              <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Mission Info</span>
+              <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
             <button onClick={() => router.push('/privacy-policy')} className="w-full flex items-center gap-4 p-5 glass-card rounded-2xl hover:bg-white/5 transition-all group">
               <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center group-hover:bg-primary transition-all">
-                <Shield className="w-5 h-5 text-white" />
+                <Shield className="w-5 h-5 text-black group-hover:text-white transition-colors" />
               </div>
-              <span className="flex-1 text-left text-[10px] font-black text-white uppercase tracking-widest">Security Protocol</span>
-              <ChevronRight className="w-4 h-4 text-white/20" />
+              <span className="flex-1 text-left text-[10px] font-black text-black uppercase tracking-widest">Security Protocol</span>
+              <ChevronRight className="w-4 h-4 text-black/20" />
             </button>
           </div>
         </div>
 
         <div className="mt-12 text-center pb-10">
-          <Image src={getAssetPath('/hastag-logo.png')} alt="Hastag Cars" width={50} height={50} className="rounded-2xl mx-auto mb-4 invert opacity-20" unoptimized />
-          <p className="text-[10px] text-white/10 font-black uppercase tracking-[0.4em]">HASTAG CAR&apos;S V1.0.0</p>
+          <Image src={getAssetPath('/hashtag-logo.png')} alt="Hashtag Garage" width={50} height={50} className="rounded-2xl mx-auto mb-4 invert opacity-20" unoptimized />
+          <p className="text-[10px] text-black/10 font-black uppercase tracking-[0.4em]">HASHTAG GARAGE V1.0.0</p>
         </div>
       </div>
 

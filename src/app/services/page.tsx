@@ -46,21 +46,21 @@ function ServicesContent() {
         <div className="flex items-center gap-4 mb-6">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary transition-colors"
+            className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary group transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-white" />
+            <ArrowLeft className="w-5 h-5 text-black group-hover:text-white transition-colors" />
           </button>
-          <h1 className="text-2xl font-black text-white tracking-tight uppercase">Services</h1>
+          <h1 className="text-2xl font-black text-black tracking-tight uppercase">Services</h1>
         </div>
 
         <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/30" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search our expertise..."
-            className="w-full pl-11 pr-4 py-3.5 rounded-2xl glass-card text-white text-sm placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
+            className="w-full pl-11 pr-4 py-3.5 rounded-2xl glass-card text-black text-sm placeholder:text-black/20 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
           />
         </div>
 
@@ -70,7 +70,7 @@ function ServicesContent() {
             className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
               !selectedCategory 
                 ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                : 'glass-card text-white/50 hover:text-white'
+                : 'glass-card text-black/50 hover:text-black hover:border-black/20'
             }`}
           >
             All
@@ -82,7 +82,7 @@ function ServicesContent() {
               className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                 selectedCategory === category.id 
                   ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                  : 'glass-card text-white/50 hover:text-white'
+                  : 'glass-card text-black/50 hover:text-black hover:border-black/20'
               }`}
             >
               {category.name}
@@ -93,7 +93,7 @@ function ServicesContent() {
 
       <div className="px-6 py-6">
         <div className="flex items-center justify-between mb-6">
-          <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
+          <p className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em]">
             Showing {filteredServices.length} Results
           </p>
         </div>
@@ -128,8 +128,8 @@ function ServicesContent() {
                 <div className="p-6 relative">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-xl font-black text-white uppercase tracking-tight leading-none mb-1">{service.name}</h3>
-                      <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">{service.subtitle}</p>
+                      <h3 className="text-xl font-black text-black uppercase tracking-tight leading-none mb-1">{service.name}</h3>
+                      <p className="text-[10px] text-black/40 font-bold uppercase tracking-widest">{service.subtitle}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-black text-primary leading-none">
@@ -140,13 +140,13 @@ function ServicesContent() {
 
                   <div className="flex flex-wrap gap-2 mb-6">
                     {service.features.map((feature) => (
-                      <span key={feature} className="text-[9px] px-2.5 py-1 bg-white/5 text-white/60 font-bold rounded-lg border border-white/5 uppercase tracking-tighter">
+                      <span key={feature} className="text-[9px] px-2.5 py-1 bg-black/5 text-black/60 font-bold rounded-lg border border-black/5 uppercase tracking-tighter">
                         {feature}
                       </span>
                     ))}
                   </div>
 
-                  <button className="w-full py-3.5 rounded-2xl bg-white text-black text-xs font-black uppercase tracking-widest group-hover:bg-primary group-hover:text-white transition-all flex items-center justify-center gap-2">
+                  <button className="w-full py-3.5 rounded-2xl bg-black text-white text-xs font-black uppercase tracking-widest group-hover:bg-primary transition-all flex items-center justify-center gap-2">
                     Book Experience <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -161,10 +161,10 @@ function ServicesContent() {
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
-            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/5">
-              <Zap className="w-8 h-8 text-white/20" />
+            <div className="w-20 h-20 bg-black/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-black/5">
+              <Zap className="w-8 h-8 text-black/20" />
             </div>
-            <p className="text-white/30 text-xs font-black uppercase tracking-widest">No matching services found</p>
+            <p className="text-black/30 text-xs font-black uppercase tracking-widest">No matching services found</p>
           </motion.div>
         )}
       </div>

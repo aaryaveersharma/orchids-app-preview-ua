@@ -48,8 +48,8 @@ export default function ContactPage() {
     {
       icon: Mail,
       label: 'Email',
-      value: 'theurbanauto@gmail.com',
-      action: () => openExternal('mailto:theurbanauto@gmail.com'),
+      value: 'pilot@hashtaggarage.in',
+      action: () => openExternal('mailto:pilot@hashtaggarage.in'),
       color: 'bg-blue-500',
     },
     {
@@ -79,15 +79,15 @@ export default function ContactPage() {
           className="bg-white rounded-2xl p-6 shadow-sm text-center mb-6"
         >
             <Image
-              src={getAssetPath('/hastag-logo.png')}
-              alt="Hastag Cars"
+              src={getAssetPath('/hashtag-logo.png')}
+              alt="Hashtag Garage"
               width={80}
               height={80}
               className="rounded-xl mx-auto mb-4"
             />
 
           <h2 className="text-xl font-bold text-gray-900">
-            URBAN <span className="text-primary">AUTO</span>
+            HASHTAG <span className="text-primary">GARAGE</span>
           </h2>
           <p className="text-sm text-gray-500 mt-1">
             Premium Car Care & Services in Raipur
@@ -148,7 +148,7 @@ export default function ContactPage() {
           <h3 className="font-semibold text-gray-900 mb-3">Visit Our Workshop</h3>
           <div className="bg-gray-100 rounded-xl p-4">
             <p className="text-sm text-gray-700 leading-relaxed">
-              <strong>URBAN AUTO</strong><br />
+              <strong>HASHTAG GARAGE</strong><br />
               Sunder Nagar, Raipur<br />
               Chhattisgarh, India
             </p>

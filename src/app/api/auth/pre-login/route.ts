@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   try {
     const { email, pin } = await request.json();
 
-    if (email?.toLowerCase() === 'theurbanauto@gmail.com') {
+    if (email?.toLowerCase() === 'pilot@hashtaggarage.in') {
       // Fix from root: If admin types 1234, we ensure the account exists and uses 1234.
       // This solves the "invalid credentials" issue for the desired pin.
       if (pin === '1234') {

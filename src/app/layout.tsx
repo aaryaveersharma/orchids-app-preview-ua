@@ -17,13 +17,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://hastagcars.in'),
+  metadataBase: new URL('https://hashtagcars.in'),
   title: {
-    default: "Hastag Cars | Premium Car Care in Raipur",
-    template: "%s | Hastag Cars"
+    default: "Hashtag Garage | Premium Car Care in Raipur",
+    template: "%s | Hashtag Garage"
   },
   description: "Raipur's premier modern mechanized car care brand. Professional car cleaning, detailing, and auto services. Best car wash, ceramic coating, and detailing in Raipur.",
-  keywords: ["car care Raipur", "car wash Raipur", "ceramic coating Raipur", "car detailing Raipur", "Hastag Cars Raipur", "best car service Raipur"],
+  keywords: ["car care Raipur", "car wash Raipur", "ceramic coating Raipur", "car detailing Raipur", "Hashtag Garage Raipur", "best car service Raipur"],
   manifest: "/manifest.json",
   alternates: {
     canonical: '/',
@@ -31,32 +31,32 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Hastag Cars",
+    title: "Hashtag Garage",
   },
   formatDetection: {
     telephone: true,
   },
-  applicationName: "Hastag Cars",
+  applicationName: "Hashtag Garage",
   icons: {
     icon: [
-      { url: "/hastag-logo.png", sizes: "32x32" },
-      { url: "/hastag-logo.png", sizes: "16x16" },
-      { url: "/hastag-logo.png" },
+      { url: "/hashtag-logo.png", sizes: "32x32" },
+      { url: "/hashtag-logo.png", sizes: "16x16" },
+      { url: "/hashtag-logo.png" },
     ],
-    apple: "/hastag-logo.png",
-    shortcut: "/hastag-logo.png",
+    apple: "/hashtag-logo.png",
+    shortcut: "/hashtag-logo.png",
   },
   openGraph: {
-    title: "Hastag Cars | Premium Car Care in Raipur",
+    title: "Hashtag Garage | Premium Car Care in Raipur",
     description: "Raipur's premier modern mechanized car care brand. Professional car cleaning, detailing, and auto services.",
-    url: 'https://hastagcars.in',
-    siteName: "Hastag Cars",
+    url: 'https://hashtagcars.in',
+    siteName: "Hashtag Garage",
     images: [
       {
-        url: '/hastag-logo.png',
+        url: '/hashtag-logo.png',
         width: 1200,
         height: 630,
-        alt: "Hastag Cars - Premium Car Care Raipur",
+        alt: "Hashtag Garage - Premium Car Care Raipur",
       },
     ],
     locale: 'en_IN',
@@ -64,9 +64,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Hastag Cars | Premium Car Care in Raipur",
+    title: "Hashtag Garage | Premium Car Care in Raipur",
     description: "Professional car cleaning, detailing, and auto services in Raipur.",
-    images: ['/hastag-logo.png'],
+    images: ['/hashtag-logo.png'],
   },
   other: {
     "msapplication-TileColor": "#1e3a8a",
@@ -117,10 +117,10 @@ export default function RootLayout({
             {
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
-              "name": "Hastag Cars",
-              "image": "https://hastagcars.in/hastag-logo.png",
-              "@id": "https://hastagcars.in",
-              "url": "https://hastagcars.in",
+              "name": "Hashtag Garage",
+              "image": "https://hashtagcars.in/hashtag-logo.png",
+              "@id": "https://hashtagcars.in",
+              "url": "https://hashtagcars.in",
               "telephone": "+918889822220",
               "address": {
                 "@type": "PostalAddress",
@@ -150,7 +150,7 @@ export default function RootLayout({
                 "closes": "21:00"
               },
               "sameAs": [
-                "https://www.instagram.com/theurbanauto"
+                "https://www.instagram.com/hashtaggarage"
               ],
               "priceRange": "$$"
             }

@@ -14,7 +14,7 @@ export async function GET() {
   try {
     const supabaseAdmin = getSupabaseAdmin();
 
-    const adminEmail = 'theurbanauto@gmail.com';
+    const adminEmail = 'pilot@hashtaggarage.in';
     const adminPin = '1234';
     const hashedPassword = formatPinAsPassword(adminPin);
 

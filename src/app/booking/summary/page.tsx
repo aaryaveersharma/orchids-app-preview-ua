@@ -282,12 +282,12 @@ export default function BookingSummaryPage() {
 
   return (
     <div className="mobile-container min-h-screen safe-bottom pb-12">
-      <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-white/5">
+      <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-black/5">
         <div className="flex items-center gap-4">
-          <button onClick={() => router.back()} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
-            <ArrowLeft className="w-5 h-5 text-white" />
+          <button onClick={() => router.back()} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary group transition-colors">
+            <ArrowLeft className="w-5 h-5 text-black group-hover:text-white transition-colors" />
           </button>
-          <h1 className="text-2xl font-black text-white tracking-tight uppercase">Final Phase</h1>
+          <h1 className="text-2xl font-black text-black tracking-tight uppercase">Final Phase</h1>
         </div>
       </header>
 
@@ -296,23 +296,23 @@ export default function BookingSummaryPage() {
         {/* Payment Summary */}
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card rounded-[2.5rem] overflow-hidden relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16" />
-          <h3 className="text-sm font-black text-white/30 uppercase tracking-[0.2em] px-8 pt-8 pb-4">Mission Manifest</h3>
+          <h3 className="text-sm font-black text-black/30 uppercase tracking-[0.2em] px-8 pt-8 pb-4">Mission Manifest</h3>
           <div className="px-8 space-y-4 pb-6">
             {servicePrices.map((sp) => (
               <div key={sp.id} className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{sp.name}</span>
-                <span className="text-sm font-black text-white tracking-tighter">
+                <span className="text-[10px] font-black text-black/60 uppercase tracking-widest">{sp.name}</span>
+                <span className="text-sm font-black text-black tracking-tighter">
                   {sp.price > 0 ? `₹${sp.price.toLocaleString('en-IN')}` : 'QUOTATION'}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="mx-8 flex flex-wrap gap-2 text-[9px] font-black text-white/30 uppercase tracking-widest pb-6 border-b border-white/5">
-            <span className="px-2 py-1 bg-white/5 rounded-lg">{summaryData.vehicleType}</span>
-            <span className="px-2 py-1 bg-white/5 rounded-lg">{summaryData.vehicleMakeModel}</span>
-            <span className="px-2 py-1 bg-white/5 rounded-lg">{summaryData.date}</span>
-            <span className="px-2 py-1 bg-white/5 rounded-lg">{summaryData.time}</span>
+          <div className="mx-8 flex flex-wrap gap-2 text-[9px] font-black text-black/30 uppercase tracking-widest pb-6 border-b border-black/5">
+            <span className="px-2 py-1 bg-black/5 rounded-lg">{summaryData.vehicleType}</span>
+            <span className="px-2 py-1 bg-black/5 rounded-lg">{summaryData.vehicleMakeModel}</span>
+            <span className="px-2 py-1 bg-black/5 rounded-lg">{summaryData.date}</span>
+            <span className="px-2 py-1 bg-black/5 rounded-lg">{summaryData.time}</span>
           </div>
 
           {appliedCoupon && discountAmount > 0 && (
@@ -323,7 +323,7 @@ export default function BookingSummaryPage() {
           )}
 
           <div className="px-8 py-8 flex items-center justify-between">
-            <span className="text-xs font-black text-white uppercase tracking-[0.3em]">Total Value</span>
+            <span className="text-xs font-black text-black uppercase tracking-[0.3em]">Total Value</span>
             <span className="text-3xl font-black text-primary tracking-tighter">
               {finalAmount > 0 ? `₹${finalAmount.toLocaleString('en-IN')}` : 'QUOTATION'}
             </span>
@@ -333,7 +333,7 @@ export default function BookingSummaryPage() {
         {/* User Details */}
         <div className="glass-card rounded-[2rem] p-8 relative">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Pilot Details</h3>
+            <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em]">Pilot Details</h3>
             <button
               onClick={() => {
                 if (editingDetails) handleSaveDetails();
@@ -352,21 +352,21 @@ export default function BookingSummaryPage() {
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   placeholder="Pilot Name"
-                  className="w-full px-6 py-4 rounded-2xl glass-card text-white text-xs font-black uppercase outline-none focus:ring-1 focus:ring-primary/50"
+                  className="w-full px-6 py-4 rounded-2xl glass-card text-black text-xs font-black uppercase outline-none focus:ring-1 focus:ring-primary/50"
                 />
                 <div
                   onClick={() => setShowAddressForm(true)}
-                  className="w-full px-6 py-4 rounded-2xl glass-card text-white text-xs font-black uppercase cursor-pointer min-h-[56px] flex items-center"
+                  className="w-full px-6 py-4 rounded-2xl glass-card text-black text-xs font-black uppercase cursor-pointer min-h-[56px] flex items-center"
                 >
-                  {user.locationAddress ? user.locationAddress : <span className="text-white/20">Set Mission Coordinates</span>}
+                  {user.locationAddress ? user.locationAddress : <span className="text-black/20">Set Mission Coordinates</span>}
                 </div>
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-lg font-black text-white uppercase tracking-tight leading-none">{editName || user.name || 'ANONYMOUS'}</p>
+              <p className="text-lg font-black text-black uppercase tracking-tight leading-none">{editName || user.name || 'ANONYMOUS'}</p>
               <div className="flex items-start gap-3">
                 <ShieldCheck className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest leading-relaxed">{user.locationAddress || 'NO COORDINATES SET'}</p>
+                <p className="text-[10px] text-black/50 font-bold uppercase tracking-widest leading-relaxed">{user.locationAddress || 'NO COORDINATES SET'}</p>
               </div>
             </div>
           )}
@@ -384,12 +384,12 @@ export default function BookingSummaryPage() {
 
         {/* Offers for you */}
         <div className="space-y-4">
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Available Incentives</h3>
+          <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] px-1">Available Incentives</h3>
           {offersLoading ? (
             <div className="flex items-center justify-center py-6"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
           ) : offers.length === 0 ? (
             <div className="glass-card rounded-[2rem] p-8 text-center border-dashed">
-              <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">No active incentives</p>
+              <p className="text-[10px] text-black/20 font-black uppercase tracking-widest">No active incentives</p>
             </div>
           ) : (
             <div className="relative">
@@ -411,12 +411,12 @@ export default function BookingSummaryPage() {
                       </div>
                       <span className="text-[10px] font-black text-primary uppercase tracking-widest">{offer.user_id ? 'EXCUSIVE' : 'GLOBAL'}</span>
                     </div>
-                    <p className="text-2xl font-black text-white tracking-widest mb-1">{offer.code}</p>
-                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-6">{offer.discount_percent}% REDUCTION RATIO</p>
+                    <p className="text-2xl font-black text-black tracking-widest mb-1">{offer.code}</p>
+                    <p className="text-[10px] text-black/40 font-bold uppercase tracking-widest mb-6">{offer.discount_percent}% REDUCTION RATIO</p>
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => copyCode(offer.code)}
-                        className="flex-1 flex items-center justify-center gap-2 py-3 glass-card rounded-xl text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white transition-all"
+                        className="flex-1 flex items-center justify-center gap-2 py-3 glass-card rounded-xl text-[10px] font-black uppercase tracking-widest text-black/60 hover:text-black hover:border-black/20 transition-all"
                       >
                         <Copy className="w-4 h-4" /> Copy
                       </button>
@@ -445,13 +445,13 @@ export default function BookingSummaryPage() {
         <div className="glass-card rounded-[2rem] p-8">
           <div className="flex items-center gap-3 mb-6">
             <Ticket className="w-5 h-5 text-primary" />
-            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Manual Override</h3>
+            <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em]">Manual Override</h3>
           </div>
 
           {appliedCoupon ? (
             <div className="flex items-center justify-between bg-green-500/10 border border-green-500/20 rounded-2xl px-6 py-4">
               <div>
-                <p className="text-sm font-black text-white tracking-widest">{appliedCoupon.code}</p>
+                <p className="text-sm font-black text-black tracking-widest">{appliedCoupon.code}</p>
                 <p className="text-[9px] text-green-500 font-black uppercase tracking-tighter">PROTOCOL ENGAGED: {appliedCoupon.discount_percent}% OFF</p>
               </div>
               <button onClick={removeCoupon} className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center hover:bg-green-500 transition-colors group">
@@ -465,7 +465,7 @@ export default function BookingSummaryPage() {
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                 placeholder="ENTER CODE"
-                className="flex-1 px-6 py-4 rounded-2xl glass-card text-white text-xs font-black uppercase placeholder:text-white/10 outline-none focus:ring-1 focus:ring-primary/50"
+              className="flex-1 px-6 py-4 rounded-2xl glass-card text-black text-xs font-black uppercase placeholder:text-black/10 outline-none focus:ring-1 focus:ring-primary/50"
               />
               <button
                 onClick={() => handleApplyCoupon()}
@@ -480,12 +480,12 @@ export default function BookingSummaryPage() {
 
         {/* Payment Options */}
         <div className="space-y-4">
-          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Engagement Protocol</h3>
+          <h3 className="text-[10px] font-black text-black/30 uppercase tracking-[0.2em] px-1">Engagement Protocol</h3>
 
           <button
             onClick={() => submitBooking('pay_later')}
             disabled={submitting || bookingDone}
-            className="w-full glass-card border-none py-5 rounded-[2rem] text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-white/5 transition-all disabled:opacity-30 flex items-center justify-center gap-4"
+            className="w-full glass-card border-none py-5 rounded-[2rem] text-black text-xs font-black uppercase tracking-[0.2em] hover:bg-black/5 transition-all disabled:opacity-30 flex items-center justify-center gap-4"
           >
             {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Clock className="w-5 h-5 text-primary" />}
             Pay After Execution
@@ -497,10 +497,10 @@ export default function BookingSummaryPage() {
             className={`w-full py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.2em] transition-all disabled:opacity-30 flex items-center justify-center gap-4 ${
               canPayWithWallet
                 ? 'bg-primary text-white shadow-2xl shadow-primary/20'
-                : 'bg-white/5 text-white/20 border border-white/5'
+                : 'bg-black/5 text-black/20 border border-black/5'
             }`}
           >
-            {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wallet className="w-5 h-5" />}
+            {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wallet className={canPayWithWallet ? "w-5 h-5" : "w-5 h-5 text-black/20"} />}
             Pilot Wallet (₹{walletBalance.toLocaleString('en-IN')})
           </button>
           {!canPayWithWallet && finalAmount > 0 && (
