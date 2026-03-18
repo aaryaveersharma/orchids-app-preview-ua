@@ -42,8 +42,8 @@ export default function SplashScreen() {
     <div className="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center">
       <div className="relative w-[120px] h-[120px] flex items-center justify-center">
         <Image
-          src={getAssetPath('/urban-auto-logo.jpg')}
-          alt="Urban Auto"
+          src={getAssetPath('/hastag-logo.png')}
+          alt="Hastag Cars"
           width={120}
           height={120}
           className="rounded-2xl shadow-xl object-cover"

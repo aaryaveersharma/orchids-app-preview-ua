@@ -17,13 +17,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://urbanauto.in'),
+  metadataBase: new URL('https://hastagcars.in'),
   title: {
-    default: "Urban Auto | Premium Car Care in Raipur",
-    template: "%s | Urban Auto"
+    default: "Hastag Cars | Premium Car Care in Raipur",
+    template: "%s | Hastag Cars"
   },
   description: "Raipur's premier modern mechanized car care brand. Professional car cleaning, detailing, and auto services. Best car wash, ceramic coating, and detailing in Raipur.",
-  keywords: ["car care Raipur", "car wash Raipur", "ceramic coating Raipur", "car detailing Raipur", "Urban Auto Raipur", "best car service Raipur"],
+  keywords: ["car care Raipur", "car wash Raipur", "ceramic coating Raipur", "car detailing Raipur", "Hastag Cars Raipur", "best car service Raipur"],
   manifest: "/manifest.json",
   alternates: {
     canonical: '/',
@@ -31,32 +31,32 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Urban Auto",
+    title: "Hastag Cars",
   },
   formatDetection: {
     telephone: true,
   },
-  applicationName: "Urban Auto",
+  applicationName: "Hastag Cars",
   icons: {
     icon: [
-      { url: "/urban-auto-logo.jpg", sizes: "32x32" },
-      { url: "/urban-auto-logo.jpg", sizes: "16x16" },
-      { url: "/urban-auto-logo.jpg" },
+      { url: "/hastag-logo.png", sizes: "32x32" },
+      { url: "/hastag-logo.png", sizes: "16x16" },
+      { url: "/hastag-logo.png" },
     ],
-    apple: "/urban-auto-logo.jpg",
-    shortcut: "/urban-auto-logo.jpg",
+    apple: "/hastag-logo.png",
+    shortcut: "/hastag-logo.png",
   },
   openGraph: {
-    title: "Urban Auto | Premium Car Care in Raipur",
+    title: "Hastag Cars | Premium Car Care in Raipur",
     description: "Raipur's premier modern mechanized car care brand. Professional car cleaning, detailing, and auto services.",
-    url: 'https://urbanauto.in',
-    siteName: 'Urban Auto',
+    url: 'https://hastagcars.in',
+    siteName: "Hastag Cars",
     images: [
       {
-        url: '/urban-auto-logo.jpg',
+        url: '/hastag-logo.png',
         width: 1200,
         height: 630,
-        alt: 'Urban Auto - Premium Car Care Raipur',
+        alt: "Hastag Cars - Premium Car Care Raipur",
       },
     ],
     locale: 'en_IN',
@@ -64,9 +64,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Urban Auto | Premium Car Care in Raipur',
+    title: "Hastag Cars | Premium Car Care in Raipur",
     description: "Professional car cleaning, detailing, and auto services in Raipur.",
-    images: ['/urban-auto-logo.jpg'],
+    images: ['/hastag-logo.png'],
   },
   other: {
     "msapplication-TileColor": "#1e3a8a",
@@ -117,14 +117,14 @@ export default function RootLayout({
             {
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
-              "name": "Urban Auto",
-              "image": "https://urbanauto.in/urban-auto-logo.jpg",
-              "@id": "https://urbanauto.in",
-              "url": "https://urbanauto.in",
+              "name": "Hastag Cars",
+              "image": "https://hastagcars.in/hastag-logo.png",
+              "@id": "https://hastagcars.in",
+              "url": "https://hastagcars.in",
               "telephone": "+918889822220",
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": "Sunder Nagar",
+                "streetAddress": "Kota canal road, near Vivekanand stadium",
                 "addressLocality": "Raipur",
                 "addressRegion": "Chhattisgarh",
                 "postalCode": "492001",

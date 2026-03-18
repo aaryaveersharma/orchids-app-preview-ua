@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       const body = new URLSearchParams({
         To: `+91${phone}`,
         From: twilioFrom,
-        Body: `Your Urban Auto verification code is: ${code}. Valid for 5 minutes.`,
+        Body: `Your Hastag Cars verification code is: ${code}. Valid for 5 minutes.`,
       });
 
       const twilioRes = await fetch(twilioUrl, {

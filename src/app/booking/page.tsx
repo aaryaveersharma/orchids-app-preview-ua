@@ -4,11 +4,12 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { services, HOME_SERVICE_IDS } from '@/lib/services-data';
-import { ArrowLeft, Calendar, Car, FileText, Loader2, X, Plus, Home, Truck, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Calendar, Car, FileText, Loader2, X, Plus, Home, Truck, ChevronRight, Zap, MapPin } from 'lucide-react';
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import { toast } from 'sonner';
 import { getAssetPath, cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const vehicleTypes = ['Sedan', 'Hatchback', 'SUV', 'Luxury'];
 
@@ -28,7 +29,7 @@ function BookingContent() {
     const [vehicleNumber, setVehicleNumber] = useState('');
     const [vehicleMakeModel, setVehicleMakeModel] = useState('');
     const [serviceMode, setServiceMode] = useState<'Home Service' | 'Pickup & Drop'>('Pickup & Drop');
-    const [date, setDate] = useState(''); // Empty initial state to prevent hydration mismatch
+    const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [notes, setNotes] = useState('');
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -39,7 +40,6 @@ function BookingContent() {
     const [pricesLoaded, setPricesLoaded] = useState(false);
     const [mounted, setMounted] = useState(false);
 
-    // Set initial state from draft or user profile once mounted
     useEffect(() => {
         setMounted(true);
         const today = getISTDate();
@@ -69,13 +69,11 @@ function BookingContent() {
             if (user.vehicleMakeModel) setVehicleMakeModel(user.vehicleMakeModel);
         }
 
-        // URL service ID overrides if list is empty
         if (serviceIdFromUrl && selectedServices.length === 0) {
             setSelectedServices([serviceIdFromUrl]);
         }
     }, [user, serviceIdFromUrl]);
 
-    // Update draft whenever fields change
     useEffect(() => {
         if (!mounted) return;
         const data = { selectedServices, vehicleType, vehicleNumber, vehicleMakeModel, serviceMode, date, time, notes };
@@ -139,14 +137,7 @@ function BookingContent() {
     useEffect(() => {
         if (!mounted) return;
         fetchOccupiedSlots();
-
-        const channel = supabase
-            .channel('slots-realtime')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
-                fetchOccupiedSlots();
-            })
-            .subscribe();
-
+        const channel = supabase.channel('slots-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => { fetchOccupiedSlots(); }).subscribe();
         return () => { supabase.removeChannel(channel); };
     }, [date, fetchOccupiedSlots, mounted]);
 
@@ -159,27 +150,18 @@ function BookingContent() {
     };
 
     const getPriceLabel = (serviceId: string) => {
-        if (!pricesLoaded) return '...';
+        if (!pricesLoaded) return '---';
         const price = getPrice(serviceId);
         const s = services.find(sv => sv.id === serviceId);
         if (price > 0) return `₹${price.toLocaleString('en-IN')}`;
-        return s?.priceLabel || 'Get Quote';
+        return s?.priceLabel || 'QUOTATION';
     };
 
     const canHomeService = selectedServices.some(id => HOME_SERVICE_IDS.includes(id));
-
-    useEffect(() => {
-        if (!canHomeService && serviceMode === 'Home Service') {
-            setServiceMode('Pickup & Drop');
-        }
-    }, [canHomeService, serviceMode]);
+    useEffect(() => { if (!canHomeService && serviceMode === 'Home Service') setServiceMode('Pickup & Drop'); }, [canHomeService, serviceMode]);
 
     const toggleService = (id: string) => {
-        setSelectedServices(prev =>
-            prev.includes(id)
-                ? (prev.length > 1 ? prev.filter(s => s !== id) : prev)
-                : [...prev, id]
-        );
+        setSelectedServices(prev => prev.includes(id) ? (prev.length > 1 ? prev.filter(s => s !== id) : prev) : [...prev, id]);
     };
 
     const validate = () => {
@@ -196,34 +178,10 @@ function BookingContent() {
     const totalAmount = selectedServices.reduce((sum, id) => sum + getPrice(id), 0);
 
     const handleProceed = () => {
-        if (!pricesLoaded) {
-            toast.error('Loading prices, please wait...');
-            return;
-        }
-        if (!validate()) {
-            toast.error('Fill all required fields');
-            return;
-        }
-
-        const selectedServiceNames = selectedServices
-            .map(id => services.find(s => s.id === id)?.name)
-            .filter(Boolean)
-            .join(', ');
-
-        const summaryData = {
-            selectedServices,
-            serviceName: selectedServiceNames || 'Car Service',
-            vehicleType,
-            vehicleNumber,
-            vehicleMakeModel,
-            serviceMode,
-            date,
-            time,
-            notes,
-            totalAmount,
-            servicePrices: Object.fromEntries(selectedServices.map(id => [id, getPrice(id)])),
-        };
-
+        if (!pricesLoaded) { toast.error('Loading prices...'); return; }
+        if (!validate()) { toast.error('Incomplete details'); return; }
+        const selectedServiceNames = selectedServices.map(id => services.find(s => s.id === id)?.name).filter(Boolean).join(', ');
+        const summaryData = { selectedServices, serviceName: selectedServiceNames || 'Car Service', vehicleType, vehicleNumber, vehicleMakeModel, serviceMode, date, time, notes, totalAmount, servicePrices: Object.fromEntries(selectedServices.map(id => [id, getPrice(id)])), };
         localStorage.setItem('ua_booking_draft', JSON.stringify(summaryData));
         router.push('/booking/summary');
     };
@@ -241,202 +199,202 @@ function BookingContent() {
     const otherSelectedServices = selectedServices.filter(id => id !== mainServiceId);
 
     return (
-        <div className="mobile-container bg-gray-50 min-h-screen pb-10">
-            <header className="bg-white px-4 py-4 flex items-center gap-4 border-b sticky top-0 z-10">
-                <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
-                    <ArrowLeft className="w-5 h-5" />
-                </button>
-                <h1 className="text-lg font-bold text-gray-900">Book Service</h1>
+        <div className="mobile-container min-h-screen safe-bottom pb-12">
+            <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-white/5">
+                <div className="flex items-center gap-4">
+                    <button onClick={() => router.back()} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
+                        <ArrowLeft className="w-5 h-5 text-white" />
+                    </button>
+                    <h1 className="text-2xl font-black text-white tracking-tight uppercase">Reservation</h1>
+                </div>
             </header>
 
-            <div className="px-4 py-4 space-y-4">
+            <div className="px-6 py-6 space-y-8">
                 {mainService && (
-                    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-                        <div className="relative h-40 w-full">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-[2rem] overflow-hidden">
+                        <div className="relative h-44 w-full">
                             <Image src={getAssetPath(mainService.image)} alt={mainService.name} fill className="object-cover" unoptimized />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                            <div className="absolute bottom-4 left-4 right-4 text-white">
-                                <h2 className="text-xl font-bold">{mainService.name}</h2>
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="opacity-80">{mainService.subtitle}</span>
-                                    <span className="font-bold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                                        {getPriceLabel(mainService.id)}
-                                    </span>
-                                </div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                            <div className="absolute bottom-6 left-6 right-6">
+                                <h2 className="text-2xl font-black text-white uppercase tracking-tight">{mainService.name}</h2>
+                                <p className="text-[10px] text-white/50 font-black uppercase tracking-widest">{mainService.subtitle}</p>
                             </div>
                         </div>
-                        <div className="p-4 flex flex-wrap gap-2">
+                        <div className="p-6 flex flex-wrap gap-2">
                             {mainService.features.map((f, i) => (
-                                <span key={i} className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] rounded-md">{f}</span>
+                                <span key={i} className="px-2.5 py-1 bg-white/5 text-white/40 text-[9px] font-black rounded-lg border border-white/5 uppercase tracking-tighter">{f}</span>
                             ))}
                         </div>
-                    </div>
+                    </motion.div>
                 )}
 
-                {otherSelectedServices.length > 0 && (
-                    <div className="space-y-2">
-                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider px-1">Added Services</h3>
-                        {otherSelectedServices.map(id => {
-                            const s = services.find(srv => srv.id === id);
-                            if (!s) return null;
-                            return (
-                                <div key={id} className="bg-white rounded-xl p-3 flex items-center justify-between shadow-sm border border-gray-100">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-lg overflow-hidden relative">
-                                            <Image src={getAssetPath(s.image)} alt={s.name} fill className="object-cover" unoptimized />
+                <AnimatePresence>
+                    {otherSelectedServices.length > 0 && (
+                        <div className="space-y-3">
+                            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Added Expertise</h3>
+                            {otherSelectedServices.map(id => {
+                                const s = services.find(srv => srv.id === id);
+                                if (!s) return null;
+                                return (
+                                    <motion.div layout key={id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="glass-card rounded-3xl p-4 flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl overflow-hidden relative">
+                                                <Image src={getAssetPath(s.image)} alt={s.name} fill className="object-cover" unoptimized />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-black text-white uppercase tracking-tight">{s.name}</h4>
+                                                <p className="text-[10px] font-black text-primary uppercase">{getPriceLabel(s.id)}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="text-sm font-bold text-gray-900">{s.name}</h4>
-                                            <p className="text-[10px] text-gray-500">{getPriceLabel(s.id)}</p>
-                                        </div>
-                                    </div>
-                                    <button onClick={() => toggleService(id)} className="text-red-500 p-1 hover:bg-red-50 rounded-full">
-                                        <X className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-
-                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-                    <div onClick={() => setShowServiceList(!showServiceList)} className="flex items-center justify-between cursor-pointer">
-                        <div>
-                            <h3 className="font-semibold text-gray-900">Add More Services</h3>
-                            <p className="text-[10px] text-gray-500">Tap to view additional services</p>
-                        </div>
-                        <Plus className={cn("w-5 h-5 text-primary transition-transform", showServiceList && "rotate-45")} />
-                    </div>
-
-                    {showServiceList && (
-                        <div className="grid grid-cols-2 gap-2 mt-4">
-                            {services.filter(s => !selectedServices.includes(s.id)).map((s) => (
-                                <button key={s.id} onClick={() => toggleService(s.id)} className="p-3 rounded-xl border text-left bg-gray-50 border-gray-100 hover:bg-gray-100 transition-all">
-                                    <p className="text-[10px] font-bold text-gray-900">{s.name}</p>
-                                    <p className="text-[9px] font-semibold text-primary/80">{getPriceLabel(s.id)}</p>
-                                </button>
-                            ))}
+                                        <button onClick={() => toggleService(id)} className="w-8 h-8 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </motion.div>
+                                );
+                            })}
                         </div>
                     )}
-                    {errors.service && <p className="text-red-500 text-xs mt-1">{errors.service}</p>}
+                </AnimatePresence>
+
+                <div className="glass-card rounded-[2rem] p-6 space-y-6">
+                    <div onClick={() => setShowServiceList(!showServiceList)} className="flex items-center justify-between cursor-pointer group">
+                        <div>
+                            <h3 className="text-lg font-black text-white uppercase tracking-tight leading-none mb-1">Scale your service</h3>
+                            <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Select additional expert modules</p>
+                        </div>
+                        <div className={cn("w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center transition-all group-hover:bg-primary", showServiceList && "bg-primary rotate-45")}>
+                            <Plus className="w-5 h-5 text-white" />
+                        </div>
+                    </div>
+
+                    <AnimatePresence>
+                        {showServiceList && (
+                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                                <div className="grid grid-cols-2 gap-3 pt-4">
+                                    {services.filter(s => !selectedServices.includes(s.id)).map((s) => (
+                                        <button key={s.id} onClick={() => toggleService(s.id)} className="p-4 rounded-[1.5rem] glass-card text-left hover:border-primary/50 transition-all group/s">
+                                            <p className="text-[10px] font-black text-white uppercase tracking-tight mb-1">{s.name}</p>
+                                            <p className="text-[9px] font-black text-primary uppercase">{getPriceLabel(s.id)}</p>
+                                        </button>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                <div className="bg-white rounded-2xl p-4 shadow-sm space-y-4">
-                    <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                        <Car className="w-4 h-4 text-primary" /> Vehicle Details
+                <div className="glass-card rounded-[2rem] p-8 space-y-8">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                        <Car className="w-6 h-6 text-primary" /> Vehicle Config
                     </h3>
 
                     <div>
-                        <p className="text-sm text-gray-600 mb-2">Vehicle Type *</p>
-                        <div className="flex flex-wrap gap-2">
+                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-4">Segment *</p>
+                        <div className="grid grid-cols-2 gap-3">
                             {vehicleTypes.map((type) => (
-                                <button key={type} onClick={() => setVehicleType(type)} className={cn("px-4 py-2 rounded-full text-sm font-medium transition-all", vehicleType === type ? "bg-primary text-white" : "bg-gray-100 text-gray-600")}>
+                                <button key={type} onClick={() => setVehicleType(type)} className={cn("py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all", vehicleType === type ? "bg-primary text-white shadow-xl shadow-primary/20" : "glass-card text-white/40 hover:text-white")}>
                                     {type}
                                 </button>
                             ))}
                         </div>
-                        {errors.vehicleType && <p className="text-red-500 text-xs mt-1">{errors.vehicleType}</p>}
                     </div>
 
-                    <div>
-                        <p className="text-sm text-gray-600 mb-1.5">Vehicle Make & Model *</p>
-                        <input type="text" value={vehicleMakeModel} onChange={(e) => setVehicleMakeModel(e.target.value)} placeholder="e.g., Maruti Swift" className={cn("w-full px-4 py-3 rounded-xl border bg-gray-50 text-sm outline-none", errors.vehicleMakeModel ? "border-red-400" : "border-gray-200")} />
-                        {errors.vehicleMakeModel && <p className="text-red-500 text-xs mt-1">{errors.vehicleMakeModel}</p>}
-                    </div>
-
-                    <div>
-                        <p className="text-sm text-gray-600 mb-1.5">Vehicle Number (Optional)</p>
-                        <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder="e.g., CG 04 AB 1234" className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none" />
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-2xl p-4 shadow-sm space-y-3">
-                    <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                        <Truck className="w-4 h-4 text-primary" /> Service Mode
-                    </h3>
-                    <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => setServiceMode('Pickup & Drop')} className={cn("p-3 rounded-xl border transition-all", serviceMode === 'Pickup & Drop' ? "border-primary bg-primary/5 ring-1 ring-primary text-primary" : "border-gray-200 bg-gray-50 text-gray-600")}>
-                            <Truck className="w-5 h-5 mx-auto mb-1" />
-                            <p className="text-xs font-semibold">Pickup & Drop</p>
-                        </button>
-                        <button onClick={() => canHomeService ? setServiceMode('Home Service') : toast.error('Only available for Wash/Cleaning')} className={cn("p-3 rounded-xl border transition-all", serviceMode === 'Home Service' ? "border-primary bg-primary/5 ring-1 ring-primary text-primary" : "border-gray-200 bg-gray-50 text-gray-600", !canHomeService && "opacity-50 grayscale cursor-not-allowed")}>
-                            <Home className="w-5 h-5 mx-auto mb-1" />
-                            <p className="text-xs font-semibold">Home Service</p>
-                        </button>
-                    </div>
-                    {!canHomeService && <p className="text-[10px] text-gray-400">Home service only for Car Wash, Interior & Exterior Cleaning</p>}
-                </div>
-
-                <div className="bg-white rounded-2xl p-4 shadow-sm space-y-6">
-                    <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-primary" /> Schedule Service
-                    </h3>
-
-                    <div>
-                        <p className="text-sm text-gray-600 mb-1.5">Select Date *</p>
-                        <input type="date" value={date} min={getISTDate()} onChange={(e) => { setDate(e.target.value); setTime(''); }} className={cn("w-full px-4 py-3 rounded-xl border bg-gray-50 text-sm outline-none", errors.date ? "border-red-400" : "border-gray-200")} />
-                        {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
-                    </div>
-
-                    {date && (
-                        <div className="space-y-4">
-                            <h4 className="text-sm font-bold text-gray-900">Available Slots</h4>
-                            {loadingSlots ? (
-                                <div className="flex justify-center py-4"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
-                            ) : availableSlots.length === 0 ? (
-                                <p className="text-center py-4 text-sm text-gray-400">No slots configured</p>
-                            ) : (
-                                <>
-                                    {['Morning', 'Afternoon', 'Evening'].map(group => {
-                                        const groupSlots = availableSlots.filter(s => {
-                                            const h = parseInt(s.split(':')[0]);
-                                            const isPm = s.toLowerCase().includes('pm');
-                                            if (group === 'Morning') return !isPm && h < 12;
-                                            if (group === 'Afternoon') return (isPm && (h === 12 || h < 4)) || (!isPm && h === 12);
-                                            return isPm && h >= 4 && h !== 12;
-                                        });
-                                        if (groupSlots.length === 0) return null;
-                                        return (
-                                            <div key={group}>
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-2 px-1">{group}</p>
-                                                <div className="grid grid-cols-3 gap-2">
-                                                    {groupSlots.map(slot => {
-                                                        const isOccupied = occupiedSlots.includes(slot);
-                                                        return (
-                                                            <button key={slot} disabled={isOccupied} onClick={() => setTime(slot)} className={cn("py-2.5 px-1 rounded-xl border text-[11px] font-bold transition-all", time === slot ? "border-primary bg-primary text-white shadow-md shadow-primary/20" : isOccupied ? "bg-gray-100 border-gray-100 text-gray-300 cursor-not-allowed" : "bg-white border-gray-100 text-gray-700")}>
-                                                                {slot}
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </>
-                            )}
-                            {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
+                    <div className="space-y-6">
+                        <div className="relative">
+                            <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Make & Model *</p>
+                            <input type="text" value={vehicleMakeModel} onChange={(e) => setVehicleMakeModel(e.target.value)} placeholder="E.G. BMW M3 GTR" className="w-full px-6 py-4 rounded-2xl glass-card text-white text-sm font-black uppercase placeholder:text-white/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
                         </div>
-                    )}
+                        <div className="relative">
+                            <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Identity Tag</p>
+                            <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder="E.G. CG 04 AB 1234" className="w-full px-6 py-4 rounded-2xl glass-card text-white text-sm font-black uppercase placeholder:text-white/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
+                        </div>
+                    </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-4 shadow-sm">
-                    <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
-                        <FileText className="w-4 h-4 text-primary" /> Additional Notes
+                <div className="glass-card rounded-[2rem] p-8 space-y-8">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                        <Truck className="w-6 h-6 text-primary" /> Service Mode
                     </h3>
-                    <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any specific requirements..." rows={3} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none resize-none" />
+                    <div className="grid grid-cols-2 gap-4">
+                        <button onClick={() => setServiceMode('Pickup & Drop')} className={cn("p-6 rounded-[2rem] flex flex-col items-center gap-4 transition-all", serviceMode === 'Pickup & Drop' ? "bg-primary text-white shadow-2xl shadow-primary/20" : "glass-card text-white/40 hover:text-white hover:bg-white/5")}>
+                            <Truck className="w-8 h-8" />
+                            <p className="text-[10px] font-black uppercase tracking-widest">Pickup & Drop</p>
+                        </button>
+                        <button onClick={() => canHomeService ? setServiceMode('Home Service') : toast.error('Only for Detailing/Servicing')} className={cn("p-6 rounded-[2rem] flex flex-col items-center gap-4 transition-all", serviceMode === 'Home Service' ? "bg-primary text-white shadow-2xl shadow-primary/20" : "glass-card text-white/40 hover:text-white hover:bg-white/5", !canHomeService && "opacity-20 grayscale cursor-not-allowed")}>
+                            <Home className="w-8 h-8" />
+                            <p className="text-[10px] font-black uppercase tracking-widest">Home Service</p>
+                        </button>
+                    </div>
+                    {!canHomeService && <p className="text-[10px] text-white/20 font-bold text-center uppercase tracking-tighter">Home service restricted to specific categories</p>}
+                </div>
+
+                <div className="glass-card rounded-[2rem] p-8 space-y-8">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                        <Calendar className="w-6 h-6 text-primary" /> Scheduling
+                    </h3>
+
+                    <div className="relative">
+                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">Launch Date *</p>
+                        <input type="date" value={date} min={getISTDate()} onChange={(e) => { setDate(e.target.value); setTime(''); }} className="w-full px-6 py-4 rounded-2xl glass-card text-white text-sm font-black outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
+                    </div>
+
+                    <AnimatePresence>
+                        {date && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+                                <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">Select Mission Window</p>
+                                {loadingSlots ? (
+                                    <div className="flex justify-center py-10"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>
+                                ) : (
+                                    <div className="space-y-8">
+                                        {['Morning', 'Afternoon', 'Evening'].map(group => {
+                                            const groupSlots = availableSlots.filter(s => {
+                                                const h = parseInt(s.split(':')[0]);
+                                                const isPm = s.toLowerCase().includes('pm');
+                                                if (group === 'Morning') return !isPm && h < 12;
+                                                if (group === 'Afternoon') return (isPm && (h === 12 || h < 4)) || (!isPm && h === 12);
+                                                return isPm && h >= 4 && h !== 12;
+                                            });
+                                            if (groupSlots.length === 0) return null;
+                                            return (
+                                                <div key={group}>
+                                                    <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] mb-4 border-l-2 border-primary/20 pl-3">{group}</p>
+                                                    <div className="grid grid-cols-3 gap-3">
+                                                        {groupSlots.map(slot => {
+                                                            const isOccupied = occupiedSlots.includes(slot);
+                                                            return (
+                                                                <button key={slot} disabled={isOccupied} onClick={() => setTime(slot)} className={cn("py-4 rounded-2xl text-[10px] font-black uppercase transition-all", time === slot ? "bg-primary text-white shadow-xl shadow-primary/20" : isOccupied ? "opacity-10 cursor-not-allowed" : "glass-card text-white/40 hover:text-white")}>
+                                                                    {slot}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                <div className="glass-card rounded-[2rem] p-8">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3 mb-6">
+                        <FileText className="w-6 h-6 text-primary" /> Flight Notes
+                    </h3>
+                    <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="SPECIFIC MODULE REQUIREMENTS..." rows={3} className="w-full px-6 py-4 rounded-2xl glass-card text-white text-sm font-black uppercase placeholder:text-white/10 outline-none focus:ring-1 focus:ring-primary/50 transition-all resize-none" />
                 </div>
 
                 {selectedServices.length > 0 && vehicleType && (
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
-                        <span className="text-sm font-semibold text-gray-900">Total Amount</span>
-                        {!pricesLoaded ? <Loader2 className="w-4 h-4 animate-spin text-primary" /> : <span className="text-lg font-bold text-primary">{totalAmount > 0 ? `₹${totalAmount.toLocaleString('en-IN')}/-` : 'Get Quote'}</span>}
-                    </div>
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-card rounded-3xl p-6 flex items-center justify-between border-primary/20">
+                        <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">Total Estimation</span>
+                        {!pricesLoaded ? <Loader2 className="w-4 h-4 animate-spin text-primary" /> : <span className="text-2xl font-black text-primary tracking-tighter">{totalAmount > 0 ? `₹${totalAmount.toLocaleString('en-IN')}` : 'QUOTATION'}</span>}
+                    </motion.div>
                 )}
 
-                <button onClick={handleProceed} className="w-full bg-primary text-white py-4 rounded-xl font-semibold text-sm hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
-                    <ChevronRight className="w-4 h-4" /> Proceed
+                <button onClick={handleProceed} className="w-full bg-white text-black py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-primary hover:text-white shadow-2xl shadow-white/5 transition-all flex items-center justify-center gap-3 group">
+                    Next Phase <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
-                <div className="h-10" />
             </div>
         </div>
     );

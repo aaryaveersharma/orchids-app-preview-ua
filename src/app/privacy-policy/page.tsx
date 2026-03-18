@@ -12,12 +12,12 @@ export default function PrivacyPolicyPage() {
         <span>Back</span>
       </Link>
 
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Urban Auto Privacy Policy</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">Hastag Cars Privacy Policy</h1>
       
       <div className="space-y-6 text-gray-600 text-sm leading-relaxed overflow-y-auto pb-10">
         <section>
           <p className="font-semibold text-gray-900">Effective date: January 22, 2026</p>
-          <p className="mt-2">Urban Auto (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;) respects your privacy and is committed to protecting your personal data. This Privacy Policy explains what data we collect, how we use it, and your rights.</p>
+          <p className="mt-2">Hastag Cars (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;) respects your privacy and is committed to protecting your personal data. This Privacy Policy explains what data we collect, how we use it, and your rights.</p>
         </section>
 
         <section>
@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
 
         <section>
           <h2 className="text-lg font-bold text-gray-900 mb-2">7. Children&apos;s Privacy</h2>
-          <p>Urban Auto is not intended for children under 13. We do not knowingly collect data from children. If we discover such data, it will be deleted promptly.</p>
+          <p>Hastag Cars is not intended for children under 13. We do not knowingly collect data from children. If we discover such data, it will be deleted promptly.</p>
         </section>
 
         <section>

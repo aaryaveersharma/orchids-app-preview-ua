@@ -455,7 +455,7 @@ export default function AdminPanel() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold">Admin Panel</h1>
-            <p className="text-xs text-white/70">Urban Auto Garage</p>
+            <p className="text-xs text-white/70">Hastag Cars Garage</p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setShowNotificationModal(true)} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors" title="Push Notification">

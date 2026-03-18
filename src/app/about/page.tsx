@@ -58,8 +58,8 @@ export default function AboutPage() {
           className="bg-white rounded-2xl p-6 shadow-sm text-center mb-6"
         >
             <Image
-              src={getAssetPath('/urban-auto-logo.jpg')}
-              alt="Urban Auto"
+              src={getAssetPath('/hastag-logo.png')}
+              alt="Hastag Cars"
               width={100}
               height={100}
               className="rounded-xl mx-auto mb-4"
@@ -82,10 +82,10 @@ export default function AboutPage() {
         >
           <h3 className="font-bold text-gray-900 mb-3">Our Story</h3>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Urban Auto is Raipur&apos;s premier modern mechanized car care brand that is changing the way people think about vehicle maintenance. We believe that cars are more than just machines; they are an extension of your lifestyle.
+            Hastag Cars is Raipur&apos;s premier modern mechanized car care brand that is changing the way people think about vehicle maintenance. We believe that cars are more than just machines; they are an extension of your lifestyle.
           </p>
           <p className="text-sm text-gray-600 leading-relaxed mt-3">
-            Every vehicle at Urban Auto is pampered by trained technicians who treat your car with the same care they would their own. From basic cleaning to complex accidental repairs, we ensure quality at every step.
+            Every vehicle at Hastag Cars is pampered by trained technicians who treat your car with the same care they would their own. From basic cleaning to complex accidental repairs, we ensure quality at every step.
           </p>
         </motion.div>
 
@@ -143,7 +143,7 @@ export default function AboutPage() {
             onClick={() => router.push('/contact')}
             className="w-full py-3 bg-white text-primary rounded-xl text-sm font-semibold"
           >
-            Contact Urban Auto
+            Contact Hastag Cars
           </button>
         </motion.div>
       </div>

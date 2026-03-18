@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { services } from '@/lib/services-data';
-import { ArrowLeft, Loader2, Ticket, Check, X, Edit3, Clock, HelpCircle, Copy, ChevronLeft, ChevronRight, Wallet } from 'lucide-react';
+import { ArrowLeft, Loader2, Ticket, Check, X, Edit3, Clock, Copy, ChevronLeft, ChevronRight, Wallet, Zap, ShieldCheck } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import AddressForm from '@/components/AddressForm';
@@ -281,112 +281,96 @@ export default function BookingSummaryPage() {
   };
 
   return (
-    <div className="mobile-container bg-gray-50 min-h-screen pb-10">
-      <header className="bg-white px-4 py-4 flex items-center gap-4 border-b sticky top-0 z-10">
-        <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-lg font-bold text-gray-900">Checkout</h1>
+    <div className="mobile-container min-h-screen safe-bottom pb-12">
+      <header className="px-6 pt-10 pb-6 sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-white/5">
+        <div className="flex items-center gap-4">
+          <button onClick={() => router.back()} className="w-10 h-10 glass-card rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </button>
+          <h1 className="text-2xl font-black text-white tracking-tight uppercase">Final Phase</h1>
+        </div>
       </header>
 
-      <div className="px-4 py-4 space-y-4">
+      <div className="px-6 py-8 space-y-8">
 
         {/* Payment Summary */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <h3 className="text-sm font-bold text-gray-900 px-4 pt-4 pb-2">Payment Summary</h3>
-          <div className="px-4 space-y-2.5 pb-2">
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card rounded-[2.5rem] overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16" />
+          <h3 className="text-sm font-black text-white/30 uppercase tracking-[0.2em] px-8 pt-8 pb-4">Mission Manifest</h3>
+          <div className="px-8 space-y-4 pb-6">
             {servicePrices.map((sp) => (
               <div key={sp.id} className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">{sp.name}</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {sp.price > 0 ? `₹${sp.price.toLocaleString('en-IN')}` : 'Get Quote'}
+                <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{sp.name}</span>
+                <span className="text-sm font-black text-white tracking-tighter">
+                  {sp.price > 0 ? `₹${sp.price.toLocaleString('en-IN')}` : 'QUOTATION'}
                 </span>
               </div>
             ))}
           </div>
-          <div className="mx-4 mt-1 flex items-center justify-between text-[11px] text-gray-400 pb-2">
-            <span>{summaryData.vehicleType} {summaryData.vehicleMakeModel && `- ${summaryData.vehicleMakeModel}`}</span>
-            <span>{summaryData.date} {summaryData.time}</span>
+
+          <div className="mx-8 flex flex-wrap gap-2 text-[9px] font-black text-white/30 uppercase tracking-widest pb-6 border-b border-white/5">
+            <span className="px-2 py-1 bg-white/5 rounded-lg">{summaryData.vehicleType}</span>
+            <span className="px-2 py-1 bg-white/5 rounded-lg">{summaryData.vehicleMakeModel}</span>
+            <span className="px-2 py-1 bg-white/5 rounded-lg">{summaryData.date}</span>
+            <span className="px-2 py-1 bg-white/5 rounded-lg">{summaryData.time}</span>
           </div>
-          {summaryData.vehicleNumber && (
-            <div className="mx-4 pb-2 text-[11px] text-gray-400">
-              {summaryData.vehicleNumber} | {summaryData.serviceMode}
+
+          {appliedCoupon && discountAmount > 0 && (
+            <div className="px-8 py-4 flex items-center justify-between bg-green-500/5">
+              <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">Incentive Applied ({appliedCoupon.code})</span>
+              <span className="text-sm font-black text-green-500">-₹{discountAmount.toLocaleString('en-IN')}</span>
             </div>
           )}
-          {appliedCoupon && discountAmount > 0 && (
-            <>
-              <div className="mx-4 border-t border-dashed border-gray-200" />
-              <div className="px-4 py-2 flex items-center justify-between">
-                <span className="text-sm text-green-600">Coupon ({appliedCoupon.code})</span>
-                <span className="text-sm font-medium text-green-600">-₹{discountAmount.toLocaleString('en-IN')}</span>
-              </div>
-            </>
-          )}
-          <div className="mx-4 border-t border-dashed border-gray-200" />
-          <div className="px-4 py-3 flex items-center justify-between">
-            <span className="text-sm font-bold text-gray-900">To be paid</span>
-            <span className="text-base font-bold text-gray-900">
-              {finalAmount > 0 ? `₹${finalAmount.toLocaleString('en-IN')}` : 'Get Quote'}
+
+          <div className="px-8 py-8 flex items-center justify-between">
+            <span className="text-xs font-black text-white uppercase tracking-[0.3em]">Total Value</span>
+            <span className="text-3xl font-black text-primary tracking-tighter">
+              {finalAmount > 0 ? `₹${finalAmount.toLocaleString('en-IN')}` : 'QUOTATION'}
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* User Details */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Your Details</h3>
+        <div className="glass-card rounded-[2rem] p-8 relative">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Pilot Details</h3>
             <button
               onClick={() => {
                 if (editingDetails) handleSaveDetails();
                 else setEditingDetails(true);
               }}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 hover:bg-primary transition-all hover:text-white"
             >
-              {editingDetails ? <><Check className="w-3 h-3" /> Save</> : <><Edit3 className="w-3 h-3" /> Edit</>}
+              {editingDetails ? <><Check className="w-3 h-3" /> Lock</> : <><Edit3 className="w-3 h-3" /> Modify</>}
             </button>
           </div>
 
           {editingDetails ? (
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-gray-500 mb-1 block">Name</label>
+            <div className="space-y-6">
                 <input
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary"
+                  placeholder="Pilot Name"
+                  className="w-full px-6 py-4 rounded-2xl glass-card text-white text-xs font-black uppercase outline-none focus:ring-1 focus:ring-primary/50"
                 />
-              </div>
-              <div>
-                <label className="text-xs text-gray-500 mb-1 block">Address</label>
                 <div
                   onClick={() => setShowAddressForm(true)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm cursor-pointer min-h-[48px] flex items-center"
+                  className="w-full px-6 py-4 rounded-2xl glass-card text-white text-xs font-black uppercase cursor-pointer min-h-[56px] flex items-center"
                 >
-                  {user.locationAddress ? (
-                    <span className="text-gray-900">{user.locationAddress}</span>
-                  ) : (
-                    <span className="text-gray-400">Tap to set your address</span>
-                  )}
+                  {user.locationAddress ? user.locationAddress : <span className="text-white/20">Set Mission Coordinates</span>}
                 </div>
-              </div>
             </div>
           ) : (
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-gray-900">{editName || user.name || 'Unknown'}</p>
-              {user.locationAddress ? (
-                <p className="text-xs text-gray-500">{user.locationAddress}</p>
-              ) : (
-                <button
-                  onClick={() => { setEditingDetails(true); setShowAddressForm(true); }}
-                  className="text-xs text-primary font-semibold"
-                >
-                  + Add Address
-                </button>
-              )}
+            <div className="space-y-4">
+              <p className="text-lg font-black text-white uppercase tracking-tight leading-none">{editName || user.name || 'ANONYMOUS'}</p>
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest leading-relaxed">{user.locationAddress || 'NO COORDINATES SET'}</p>
+              </div>
             </div>
           )}
-          <p className="text-[10px] text-amber-600 font-medium mt-2">Note: We are serviceable in Raipur only*</p>
+          <p className="text-[9px] text-primary font-black uppercase tracking-tighter mt-6 opacity-50 text-center">Operational region: Raipur, Chhattisgarh</p>
         </div>
 
         {showAddressForm && (
@@ -399,61 +383,52 @@ export default function BookingSummaryPage() {
 
 
         {/* Offers for you */}
-        <div>
-          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1">Offers for you</h3>
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Available Incentives</h3>
           {offersLoading ? (
-            <div className="flex items-center justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-primary" /></div>
+            <div className="flex items-center justify-center py-6"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
           ) : offers.length === 0 ? (
-            <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-              <p className="text-xs text-gray-400 text-center">No offers available right now</p>
+            <div className="glass-card rounded-[2rem] p-8 text-center border-dashed">
+              <p className="text-[10px] text-white/20 font-black uppercase tracking-widest">No active incentives</p>
             </div>
           ) : (
             <div className="relative">
-              {canScrollLeft && (
-                <button
-                  onClick={() => scrollOffers('left')}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white shadow-md rounded-full flex items-center justify-center border border-gray-200"
-                >
-                  <ChevronLeft className="w-4 h-4 text-gray-600" />
-                </button>
-              )}
               <div
                 ref={offersRef}
-                className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1"
+                className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {offers.map((offer) => (
                   <div
                     key={offer.id}
-                    className={`flex-shrink-0 w-[280px] snap-start bg-gradient-to-r ${
-                      appliedCoupon?.code === offer.code
-                        ? 'from-green-50 to-green-100 border-green-300'
-                        : 'from-primary/5 to-primary/10 border-primary/20'
-                    } rounded-2xl p-4 border relative overflow-hidden`}
+                    className={`flex-shrink-0 w-[300px] snap-start glass-card rounded-[2rem] p-6 relative overflow-hidden group ${
+                      appliedCoupon?.code === offer.code ? 'border-green-500/50' : ''
+                    }`}
                   >
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -mr-6 -mt-6" />
-                    <div className="flex items-center gap-2 mb-2">
-                      <Ticket className="w-4 h-4 text-primary" />
-                      <span className="text-xs font-bold text-primary uppercase">{offer.user_id ? 'Just for you' : 'For everyone'}</span>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Zap className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="text-[10px] font-black text-primary uppercase tracking-widest">{offer.user_id ? 'EXCUSIVE' : 'GLOBAL'}</span>
                     </div>
-                    <p className="text-lg font-black text-gray-900 tracking-wider">{offer.code}</p>
-                    <p className="text-sm text-gray-600 mt-0.5">{offer.discount_percent}% off on your order</p>
-                    <div className="flex items-center gap-2 mt-3">
+                    <p className="text-2xl font-black text-white tracking-widest mb-1">{offer.code}</p>
+                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-6">{offer.discount_percent}% REDUCTION RATIO</p>
+                    <div className="flex items-center gap-3">
                       <button
                         onClick={() => copyCode(offer.code)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg text-xs font-semibold text-gray-700 border border-gray-200 hover:bg-gray-50 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-2 py-3 glass-card rounded-xl text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white transition-all"
                       >
-                        <Copy className="w-3 h-3" /> Copy
+                        <Copy className="w-4 h-4" /> Copy
                       </button>
                       {appliedCoupon?.code === offer.code ? (
-                        <span className="flex items-center gap-1 px-3 py-1.5 bg-green-100 rounded-lg text-xs font-bold text-green-700">
-                          <Check className="w-3 h-3" /> Applied
-                        </span>
+                        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-green-500 text-white">
+                          <Check className="w-6 h-6" />
+                        </div>
                       ) : (
                         <button
                           onClick={() => handleApplyCoupon(offer.code)}
                           disabled={couponLoading}
-                          className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary/90 transition-colors disabled:opacity-60"
+                          className="flex-1 py-3 bg-white text-black rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all disabled:opacity-30"
                         >
                           Apply
                         </button>
@@ -462,136 +437,96 @@ export default function BookingSummaryPage() {
                   </div>
                 ))}
               </div>
-              {canScrollRight && (
-                <button
-                  onClick={() => scrollOffers('right')}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white shadow-md rounded-full flex items-center justify-center border border-gray-200"
-                >
-                  <ChevronRight className="w-4 h-4 text-gray-600" />
-                </button>
-              )}
             </div>
           )}
         </div>
 
         {/* Coupon Input */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <div className="flex items-center gap-2 mb-3">
-            <Ticket className="w-4 h-4 text-primary" />
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Apply a Coupon Code</h3>
+        <div className="glass-card rounded-[2rem] p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <Ticket className="w-5 h-5 text-primary" />
+            <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Manual Override</h3>
           </div>
 
           {appliedCoupon ? (
-            <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+            <div className="flex items-center justify-between bg-green-500/10 border border-green-500/20 rounded-2xl px-6 py-4">
               <div>
-                <p className="text-sm font-bold text-green-700">{appliedCoupon.code}</p>
-                <p className="text-xs text-green-600">{appliedCoupon.discount_percent}% off applied</p>
+                <p className="text-sm font-black text-white tracking-widest">{appliedCoupon.code}</p>
+                <p className="text-[9px] text-green-500 font-black uppercase tracking-tighter">PROTOCOL ENGAGED: {appliedCoupon.discount_percent}% OFF</p>
               </div>
-              <button onClick={removeCoupon} className="p-1.5 bg-green-100 rounded-lg hover:bg-green-200 transition-colors">
-                <X className="w-4 h-4 text-green-700" />
+              <button onClick={removeCoupon} className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center hover:bg-green-500 transition-colors group">
+                <X className="w-5 h-5 text-green-500 group-hover:text-white" />
               </button>
             </div>
           ) : (
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <input
                 type="text"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                placeholder="Enter coupon code"
-                className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary uppercase"
+                placeholder="ENTER CODE"
+                className="flex-1 px-6 py-4 rounded-2xl glass-card text-white text-xs font-black uppercase placeholder:text-white/10 outline-none focus:ring-1 focus:ring-primary/50"
               />
               <button
                 onClick={() => handleApplyCoupon()}
                 disabled={couponLoading}
-                className="px-5 py-3 bg-primary text-white rounded-xl text-sm font-bold disabled:opacity-60 flex items-center gap-1.5"
+                className="w-14 h-14 bg-white text-black rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all disabled:opacity-30"
               >
-                {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
+                {couponLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <ChevronRight className="w-6 h-6" />}
               </button>
             </div>
           )}
         </div>
 
         {/* Payment Options */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider px-1">Choose Payment Method</h3>
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] px-1">Engagement Protocol</h3>
 
           <button
             onClick={() => submitBooking('pay_later')}
             disabled={submitting || bookingDone}
-            className="w-full bg-white border-2 border-gray-200 text-gray-900 py-4 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all disabled:opacity-60 flex items-center justify-center gap-3"
+            className="w-full glass-card border-none py-5 rounded-[2rem] text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-white/5 transition-all disabled:opacity-30 flex items-center justify-center gap-4"
           >
-            {submitting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Clock className="w-5 h-5 text-gray-500" />
-            )}
-            Pay After Service Completion
+            {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Clock className="w-5 h-5 text-primary" />}
+            Pay After Execution
           </button>
 
           <button
             onClick={() => submitBooking('wallet')}
             disabled={submitting || bookingDone}
-            className={`w-full py-4 rounded-xl font-semibold text-sm transition-all disabled:opacity-60 flex items-center justify-center gap-3 ${
+            className={`w-full py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.2em] transition-all disabled:opacity-30 flex items-center justify-center gap-4 ${
               canPayWithWallet
-                ? 'bg-green-600 text-white hover:bg-green-700'
-                : 'bg-gray-100 text-gray-400 border-2 border-gray-200'
+                ? 'bg-primary text-white shadow-2xl shadow-primary/20'
+                : 'bg-white/5 text-white/20 border border-white/5'
             }`}
           >
-            {submitting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Wallet className="w-5 h-5" />
-            )}
-            Pay with Wallet (₹{walletBalance.toLocaleString('en-IN')})
+            {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wallet className="w-5 h-5" />}
+            Pilot Wallet (₹{walletBalance.toLocaleString('en-IN')})
           </button>
           {!canPayWithWallet && finalAmount > 0 && (
-            <p className="text-[10px] text-red-500 text-center -mt-1">Balance too low. Please recharge your wallet.</p>
+            <p className="text-[9px] text-primary font-black uppercase text-center tracking-widest">Insufficient Credits in Reservoir</p>
           )}
         </div>
 
-        <div className="h-10" />
+        <div className="h-12" />
       </div>
 
         {/* Insufficient Balance Popup */}
         <AnimatePresence>
           {showInsufficientPopup && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-              onClick={() => setShowInsufficientPopup(false)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-2xl p-6 w-full max-w-sm text-center"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Wallet className="w-7 h-7 text-red-600" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-6" onClick={() => setShowInsufficientPopup(false)}>
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="glass-card rounded-[3rem] p-10 w-full max-w-sm text-center border-primary/20" onClick={(e) => e.stopPropagation()}>
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-primary/20">
+                  <Wallet className="w-10 h-10 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Insufficient Balance</h3>
-                <p className="text-sm text-gray-500 leading-relaxed mb-2">
-                  Your wallet balance is <span className="font-bold text-gray-900">₹{walletBalance.toLocaleString('en-IN')}</span> but the service costs <span className="font-bold text-gray-900">₹{finalAmount.toLocaleString('en-IN')}</span>.
+                <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4">Refuel Required</h3>
+                <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest leading-loose mb-10">
+                  Reservoir: <span className="text-white">₹{walletBalance.toLocaleString('en-IN')}</span><br/>
+                  Required: <span className="text-white">₹{finalAmount.toLocaleString('en-IN')}</span>
                 </p>
-                <p className="text-sm text-gray-500 leading-relaxed mb-5">
-                  Please add money to your wallet or choose a different payment method.
-                </p>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => { setShowInsufficientPopup(false); router.push('/wallet/add-money'); }}
-                    className="w-full bg-primary text-white py-3 rounded-xl font-semibold text-sm hover:bg-primary/90 transition-colors"
-                  >
-                    Add Money
-                  </button>
-                  <button
-                    onClick={() => setShowInsufficientPopup(false)}
-                    className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold text-sm hover:bg-gray-200 transition-colors"
-                  >
-                    Choose Another Method
-                  </button>
+                <div className="space-y-3">
+                  <button onClick={() => { setShowInsufficientPopup(false); router.push('/wallet/add-money'); }} className="w-full bg-primary text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary/20 transition-all">Add Credits</button>
+                  <button onClick={() => setShowInsufficientPopup(false)} className="w-full glass-card text-white/50 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest hover:text-white transition-all">Abort Protocol</button>
                 </div>
               </motion.div>
             </motion.div>

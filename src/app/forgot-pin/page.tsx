@@ -175,8 +175,8 @@ export default function ForgotPinPage() {
       <div className="flex flex-col items-center mb-8">
         <div className="relative w-[80px] h-[80px] flex items-center justify-center">
           <Image
-            src={getAssetPath('/urban-auto-logo.jpg')}
-            alt="Urban Auto"
+            src={getAssetPath('/hastag-logo.png')}
+            alt="Hastag Cars"
             width={80}
             height={80}
             className="rounded-xl shadow-md object-cover"

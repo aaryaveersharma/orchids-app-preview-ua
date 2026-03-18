@@ -126,7 +126,7 @@ export default function AddMoneyPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Contact Urban Auto</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Contact Hastag Cars</h3>
               <p className="text-sm text-gray-500 mb-8">Share your payment screenshot with us to get your balance updated instantly.</p>
 
               <div className="grid grid-cols-2 gap-4">

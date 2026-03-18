@@ -79,8 +79,8 @@ export default function ContactPage() {
           className="bg-white rounded-2xl p-6 shadow-sm text-center mb-6"
         >
             <Image
-              src={getAssetPath('/urban-auto-logo.jpg')}
-              alt="Urban Auto"
+              src={getAssetPath('/hastag-logo.png')}
+              alt="Hastag Cars"
               width={80}
               height={80}
               className="rounded-xl mx-auto mb-4"

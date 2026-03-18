@@ -221,8 +221,8 @@ export default function LoginPage() {
         <div className="flex flex-col items-center mb-10">
           <div className="relative w-[90px] h-[90px] flex items-center justify-center">
             <Image
-              src={getAssetPath('/urban-auto-logo.jpg')}
-              alt="Urban Auto"
+              src={getAssetPath('/hastag-logo.png')}
+              alt="Hastag Cars"
               width={90}
               height={90}
               className="rounded-xl shadow-md object-cover"
@@ -294,8 +294,8 @@ export default function LoginPage() {
       <div className="flex flex-col items-center mb-10">
         <div className="relative w-[90px] h-[90px] flex items-center justify-center">
           <Image
-            src={getAssetPath('/urban-auto-logo.jpg')}
-            alt="Urban Auto"
+            src={getAssetPath('/hastag-logo.png')}
+            alt="Hastag Cars"
             width={90}
             height={90}
             className="rounded-xl shadow-md object-cover"
@@ -309,7 +309,7 @@ export default function LoginPage() {
       </div>
 
       <h2 className="text-2xl font-bold text-gray-900 mb-1 text-center">Welcome Back</h2>
-      <p className="text-gray-500 text-sm mb-8 text-center">Login to your Urban Auto account</p>
+      <p className="text-gray-500 text-sm mb-8 text-center">Login to your Hastag Cars account</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
   <div>
