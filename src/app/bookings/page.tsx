@@ -2,15 +2,116 @@
 
 import { useRouter } from 'next/navigation';
 import { useAuth, Booking } from '@/lib/auth-context';
-import { ArrowLeft, Calendar, MapPin, AlertCircle, Loader2, IndianRupee, Zap, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, X, AlertCircle, Loader2, IndianRupee, Zap, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useMemo } from 'react';
 import { toast } from 'sonner';
 
-function BookingItem({ booking, onCancel }: {
+function RescheduleModal({ booking, onClose }: { booking: Booking; onClose: () => void }) {
+  const { rescheduleBooking } = useAuth();
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!date || !time) {
+      toast.error('Select new date and time');
+      return;
+    }
+    setLoading(true);
+    const [hours, minutes] = time.split(':');
+    const h = parseInt(hours);
+    const ampm = h >= 12 ? 'pm' : 'am';
+    const h12 = h % 12 || 12;
+    const formattedTime = `${h12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+    const result = await rescheduleBooking(booking.id, `${date} ${formattedTime}`);
+    if (result.success) {
+      toast.success('Mission Rescheduled');
+      onClose();
+    } else {
+      toast.error(result.error || 'Failed to reschedule');
+      setLoading(false);
+    }
+  };
+
+  const minDate = new Date().toISOString().split('T')[0];
+
+  return (
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[60] flex items-center justify-center p-6">
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="glass-card rounded-[3rem] p-10 w-full max-w-sm relative"
+      >
+        <div className="flex justify-between items-center mb-8">
+          <h3 className="text-2xl font-black text-white uppercase tracking-tight">Reschedule</h3>
+          <button onClick={onClose} className="p-2 glass-card rounded-full text-white/40 hover:text-white transition-colors"><X size={20} /></button>
+        </div>
+
+        <div className="space-y-6 mb-10">
+          <div>
+            <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">New Launch Date</p>
+            <input
+              type="date"
+              min={minDate}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full px-6 py-4 rounded-2xl glass-card text-white text-xs font-black uppercase outline-none focus:ring-1 focus:ring-primary/50 transition-all"
+            />
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">New Mission Time</p>
+            <input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="w-full px-6 py-4 rounded-2xl glass-card text-white text-xs font-black uppercase outline-none focus:ring-1 focus:ring-primary/50 transition-all"
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="w-full bg-primary text-white py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl shadow-primary/20 transition-all flex items-center justify-center gap-3"
+        >
+          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+          Update Protocol
+        </button>
+      </motion.div>
+    </div>
+  );
+}
+
+function BookingItem({ booking, onCancel, onReschedule }: {
   booking: Booking; 
   onCancel: (id: string) => void;
+  onReschedule: (booking: Booking) => void;
 }) {
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const created = new Date(booking.createdAt).getTime();
+      const now = new Date().getTime();
+      const diff = 60 * 60 * 1000 - (now - created);
+      return Math.max(0, diff);
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const interval = setInterval(() => {
+      const remaining = calculateTimeLeft();
+      setTimeLeft(remaining);
+      if (remaining <= 0) clearInterval(interval);
+    }, 1000 * 60);
+
+    return () => clearInterval(interval);
+  }, [booking.createdAt]);
+
+  const minutesLeft = Math.floor(timeLeft / (1000 * 60));
+  const canReschedule = timeLeft > 0 && (booking.status === 'Confirmed' || booking.status === 'Rescheduled');
+
   const isRescheduleConfirmed = booking.status === 'Confirmed' && booking.rescheduledBy !== null && booking.rescheduledBy !== undefined;
 
   const getStatusColor = (status: string) => {
@@ -39,7 +140,7 @@ function BookingItem({ booking, onCancel }: {
         </span>
       </div>
 
-      <div className="space-y-4 mb-8">
+      <div className="space-y-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 glass-card rounded-lg flex items-center justify-center">
             <Calendar className="w-4 h-4 text-primary" />
@@ -63,17 +164,40 @@ function BookingItem({ booking, onCancel }: {
         </div>
       </div>
 
-      {booking.status === 'Confirmed' && (
+      {canReschedule && (
+        <div className="mt-6 pt-6 border-t border-white/5 space-y-4">
+          <div className="flex items-center gap-2 text-primary">
+            <Clock className="w-3 h-3" />
+            <span className="text-[8px] font-black uppercase tracking-widest">Protocol open for {minutesLeft}m</span>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => onReschedule(booking)}
+              className="flex-1 py-3 bg-white text-black rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl shadow-white/5"
+            >
+              Reschedule
+            </button>
+            <button
+              onClick={() => onCancel(booking.id)}
+              className="flex-1 py-3 glass-card text-white/40 rounded-xl text-[9px] font-black uppercase tracking-widest hover:text-red-500 transition-all"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {booking.status === 'Confirmed' && !canReschedule && (
         <button
           onClick={() => onCancel(booking.id)}
-          className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-500/10 transition-all"
+          className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-500/10 transition-all mt-4"
         >
           Abort Mission
         </button>
       )}
 
       {booking.status === 'Cancelled' && (
-        <div className="w-full py-4 rounded-2xl bg-red-500/5 border border-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] text-center">
+        <div className="w-full py-4 rounded-2xl bg-red-500/5 border border-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] text-center mt-4">
           Mission Terminated
         </div>
       )}
@@ -85,6 +209,7 @@ export default function BookingsPage() {
   const { user, isLoading, bookings, cancelBooking } = useAuth();
   const router = useRouter();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [reschedulingBooking, setReschedulingBooking] = useState<Booking | null>(null);
 
   useEffect(() => { if (!isLoading && !user) router.replace('/login'); }, [isLoading, user, router]);
 
@@ -135,6 +260,7 @@ export default function BookingsPage() {
                 key={booking.id} 
                 booking={booking} 
                 onCancel={setCancellingId}
+                onReschedule={setReschedulingBooking}
               />
             ))}
           </div>
@@ -158,6 +284,15 @@ export default function BookingsPage() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {reschedulingBooking && (
+          <RescheduleModal
+            booking={reschedulingBooking}
+            onClose={() => setReschedulingBooking(null)}
+          />
         )}
       </AnimatePresence>
     </div>

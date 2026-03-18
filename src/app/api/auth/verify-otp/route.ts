@@ -1,19 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+}
+
 export async function POST(request: Request) {
+  const supabaseAdmin = getSupabaseAdmin();
   try {
     const { phone, code } = await request.json();
 
     if (!phone || !code) {
       return NextResponse.json({ error: 'Phone and OTP code are required' }, { status: 400 });
     }
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: { autoRefreshToken: false, persistSession: false }
-    });
 
     const { data: otpRow, error: fetchError } = await supabaseAdmin
       .from('otp_codes')

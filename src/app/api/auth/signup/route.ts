@@ -2,17 +2,23 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { formatPinAsPassword } from '@/lib/utils';
 
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+}
+
 export async function POST(request: Request) {
-  console.log('Signup request received');
+  const supabaseAdmin = getSupabaseAdmin();
   try {
     const body = await request.text();
-    console.log('Signup body:', body);
     
     let data;
     try {
       data = JSON.parse(body);
     } catch (e) {
-      console.error('Failed to parse signup body as JSON:', body);
       return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 });
     }
     
@@ -21,25 +27,6 @@ export async function POST(request: Request) {
     if (!email || !password || !name || !phone) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      console.error('Missing Supabase environment variables');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
-
-    const supabaseAdmin = createClient(
-      supabaseUrl,
-      supabaseServiceKey,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
 
     // Create user and auto-confirm email
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
