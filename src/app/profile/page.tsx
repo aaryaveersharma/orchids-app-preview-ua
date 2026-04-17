@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useNativeNotifications } from '@/hooks/useNativeNotifications';
-import { ArrowLeft, User, Mail, Phone, MapPin, LogOut, ChevronRight, HelpCircle, Info, KeyRound, Eye, EyeOff, X, Loader2, Wallet, Shield, Trash2, Lock, Bell } from 'lucide-react';
+import { ArrowLeft, Package, User, Mail, Phone, MapPin, LogOut, ChevronRight, HelpCircle, Info, KeyRound, Eye, EyeOff, X, Loader2, Wallet, Shield, Trash2, Lock, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import { toast } from 'sonner';
@@ -65,12 +65,34 @@ export default function ProfilePage() {
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [packages, setPackages] = useState<any[]>([]);
+  const [loadingPackages, setLoadingPackages] = useState(false);
 
     useEffect(() => {
         if (!isLoading && !user) {
       router.replace('/login');
         }
       }, [isLoading, user?.id]);
+
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      if (!user) return;
+      setLoadingPackages(true);
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/packages?userId=${user.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setPackages(data);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingPackages(false);
+      }
+    };
+    fetchPackages();
+  }, [user]);
 
   useEffect(() => {
     if (resendTimer > 0) {

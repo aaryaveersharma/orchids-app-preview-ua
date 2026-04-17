@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { LogOut, Check, RefreshCw, ChevronDown, ChevronUp, User, Phone, Mail, MapPin, Car, FileText, Calendar, Loader2, Copy, Users, CalendarDays, KeyRound, Eye, EyeOff, X, ShieldCheck, IndianRupee, Wrench, AlertTriangle, Truck, Home, Search, Ticket, Plus, Trash2, ToggleLeft, ToggleRight, ChevronRight, Bell, Settings, Image as ImageIcon, QrCode, MessageSquare, Upload, Clock, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { services } from '@/lib/services-data';
 import { toast } from 'sonner';
 
 interface AdminBooking {
@@ -127,7 +128,7 @@ export default function AdminPanel() {
   const [loadingPackages, setLoadingPackages] = useState(false);
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState<any | null>(null);
-  const [packageForm, setPackageForm] = useState({ name: '', price: '', inclusions: '' });
+  const [packageForm, setPackageForm] = useState({ name: '', price: '', inclusions: '', service_allowances: {} });
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [loadingCrm, setLoadingCrm] = useState(false);
   const [showCrmModal, setShowCrmModal] = useState(false);
@@ -901,7 +902,7 @@ export default function AdminPanel() {
             <button
               onClick={() => {
                 setEditingPackage(null);
-                setPackageForm({ name: '', price: '', inclusions: '' });
+                setPackageForm({ name: '', price: '', inclusions: '', service_allowances: {} });
                 setShowPackageModal(true);
               }}
               className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold flex items-center gap-1"
@@ -926,7 +927,7 @@ export default function AdminPanel() {
                     <button
                       onClick={() => {
                         setEditingPackage(pkg);
-                        setPackageForm({ name: pkg.name, price: String(pkg.price), inclusions: (pkg.inclusions || []).join('\n') });
+                        setPackageForm({ name: pkg.name, price: String(pkg.price), inclusions: (pkg.inclusions || []).join('\n'), service_allowances: pkg.service_allowances || {} });
                         setShowPackageModal(true);
                       }}
                       className="p-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"

@@ -52,20 +52,27 @@ export default function PackagesPage() {
       package_price: pkg.price
     };
     localStorage.setItem('ua_booking_draft', JSON.stringify(draft));
-    router.push('/booking');
+    router.push('/packages/checkout');
   };
 
   return (
     <div className="mobile-container bg-gray-50 min-h-screen pb-10">
-      <header className="bg-white px-4 py-4 flex items-center gap-4 border-b sticky top-0 z-10">
-        <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
+
+      <header className="bg-white px-4 py-4 flex items-center justify-between border-b sticky top-0 z-10">
+        <div className="flex items-center gap-4">
+            <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            <h1 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <PackageIcon className="w-5 h-5 text-primary" />
+              Service Packages
+            </h1>
+        </div>
+        <button onClick={() => router.push('/profile')} className="text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg hover:bg-primary/20 transition-colors">
+            Active Packages
         </button>
-        <h1 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <PackageIcon className="w-5 h-5 text-primary" />
-          Service Packages
-        </h1>
       </header>
+
 
       <main className="p-4 space-y-6">
         <div className="text-center mb-6">
