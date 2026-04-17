@@ -124,6 +124,54 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
+    if (action === 'create-user') {
+      const { email, pin, full_name, phone } = body;
+      if (!email || !pin || !full_name || !phone) {
+        return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      }
+
+      const { data: userData, error: userError } = await adminClient.auth.admin.createUser({
+        email,
+        password: formatPinAsPassword(pin),
+        email_confirm: true,
+        user_metadata: { full_name, phone }
+      });
+
+      if (userError) {
+        return NextResponse.json({ error: userError.message }, { status: 400 });
+      }
+
+      if (userData.user) {
+        await adminClient.from('profiles').upsert([{
+          id: userData.user.id,
+          email,
+          full_name,
+          phone,
+          verified: true,
+          blocked: false,
+          updated_at: new Date().toISOString()
+        }]);
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'create-booking') {
+      const { bookingData } = body;
+      if (!bookingData || !bookingData.user_id) {
+        return NextResponse.json({ error: 'Booking data and user ID required' }, { status: 400 });
+      }
+
+      const { data, error } = await adminClient
+        .from('bookings')
+        .insert([bookingData])
+        .select()
+        .single();
+
+      if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json({ success: true, booking: data });
+    }
+
     if (action === 'delete-user') {
       if (!userId) return NextResponse.json({ error: 'User ID required' }, { status: 400 });
       const { error } = await adminClient.auth.admin.deleteUser(userId);

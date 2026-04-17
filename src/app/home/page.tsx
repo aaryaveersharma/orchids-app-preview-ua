@@ -25,18 +25,12 @@ export default function HomePage() {
   const { getPrice, loaded: pricesLoaded } = useLivePrices();
 
     useEffect(() => {
-      if (!isLoading && !user) {
-        router.replace('/login');
-      }
-    }, [isLoading, user, router]);
-
-    useEffect(() => {
       if (!isLoading && user && isAdmin) {
         router.replace('/admin');
       }
     }, [isLoading, user, isAdmin, router]);
 
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
       <div className="mobile-container flex items-center justify-center min-h-screen">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />

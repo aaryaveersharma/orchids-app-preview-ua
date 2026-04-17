@@ -83,12 +83,6 @@ function BookingContent() {
     }, [selectedServices, vehicleType, vehicleNumber, vehicleMakeModel, serviceMode, date, time, notes, mounted]);
 
     useEffect(() => {
-        if (!isLoading && !user) {
-            router.replace('/login');
-        }
-    }, [isLoading, user, router]);
-
-    useEffect(() => {
         const fetchConfig = async () => {
             try {
                 const { data, error } = await supabase.from('app_config').select('*').eq('key', 'booking_slots').single();
@@ -225,6 +219,12 @@ function BookingContent() {
         };
 
         localStorage.setItem('ua_booking_draft', JSON.stringify(summaryData));
+
+        if (!user) {
+            router.push('/login?redirect=/booking/summary');
+            return;
+        }
+
         router.push('/booking/summary');
     };
 
