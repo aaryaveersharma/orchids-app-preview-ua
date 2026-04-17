@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef, useMemo, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
@@ -12,17 +12,18 @@ import Carousel, { CarouselItem } from '@/components/Carousel';
 
 type Step = 'phone' | 'otp' | 'details';
 
-export default function SignupPage() {
+function SignupContent() {
   const [step, setStep] = useState<Step>('phone');
   const [phone, setPhone] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [redirecting, setRedirecting] = useState(false);
+
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [otpSending, setOtpSending] = useState(false);
@@ -78,6 +79,10 @@ export default function SignupPage() {
     const newErrors: Record<string, string> = {};
     if (!phone) newErrors.phone = 'Phone number is required';
     else if (!/^[6-9]\d{9}$/.test(phone)) newErrors.phone = 'Please enter a valid 10-digit phone number';
+
+    if (!pin) newErrors.pin = 'Pin is required';
+    else if (!/^\d{4}$/.test(pin)) newErrors.pin = 'Pin must be exactly 4 digits';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -193,13 +198,13 @@ export default function SignupPage() {
       // Generate dummy user details
       const dummyEmail = `user${Date.now()}@hashtaggarage.in`;
       const dummyName = `User ${phone.slice(-4)}`;
-      const dummyPin = '1234';
 
-      const result = await signup(dummyName, dummyEmail, phone, dummyPin);
+      // Pass user-defined pin from step 1
+      const result = await signup(dummyName, dummyEmail, phone, pin);
 
       if (result.success) {
         setRedirecting(true);
-        toast.success('Account created successfully! Default PIN is 1234.');
+        toast.success('Account created successfully!');
         const dest = redirect || (result.isAdmin ? '/admin' : '/home');
         router.replace(dest);
         setTimeout(() => router.replace(dest), 100);
@@ -337,6 +342,26 @@ export default function SignupPage() {
           {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
         </div>
 
+        <div>
+          <label className="text-sm font-medium text-gray-700 mb-1.5 block">Create 4-Digit Pin</label>
+          <div className="relative">
+            <input
+              type={showPin ? 'text' : 'password'}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={4}
+              value={pin}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              placeholder="Set 4-digit Pin"
+              className={`w-full px-4 py-3 rounded-xl border ${errors.pin ? 'border-red-400' : 'border-gray-200'} bg-gray-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm pr-10`}
+            />
+            <button type="button" onClick={() => setShowPin(!showPin)} className="absolute right-3 top-1/2 -translate-y-1/2">
+              {showPin ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
+            </button>
+          </div>
+          {errors.pin && <p className="text-red-500 text-xs mt-1">{errors.pin}</p>}
+        </div>
+
         <button
           type="submit"
           disabled={otpSending}
@@ -349,7 +374,7 @@ export default function SignupPage() {
 
       <p className="text-center text-sm text-gray-500 mt-6">
         Already have an account?{' '}
-        <Link href="/login" className="text-primary font-semibold hover:underline">
+        <Link href={`/login${redirect ? `?redirect=${redirect}` : ''}`} className="text-primary font-semibold hover:underline">
           Login
         </Link>
       </p>
@@ -361,5 +386,17 @@ export default function SignupPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="mobile-container flex items-center justify-center min-h-screen bg-white">
+        <Loader2 className="w-8 h-8 border-primary text-primary animate-spin" />
+      </div>
+    }>
+      <SignupContent />
+    </Suspense>
   );
 }

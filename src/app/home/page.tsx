@@ -168,12 +168,20 @@ export default function HomePage() {
                   <span className="text-xs text-gray-400">9AM - 9PM</span>
                 </div>
               </div>
-              <button
-                onClick={() => router.push('/services')}
-                className="px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-lg"
-              >
-                Book
-              </button>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => router.push('/services')}
+                  className="px-3 py-1.5 bg-primary text-white text-xs font-medium rounded-lg text-center"
+                >
+                  Bookings
+                </button>
+                <button
+                  onClick={() => router.push('/packages')}
+                  className="px-3 py-1.5 bg-amber-500 text-white text-xs font-medium rounded-lg text-center"
+                >
+                  Packages
+                </button>
+              </div>
             </div>
           </div>
 
