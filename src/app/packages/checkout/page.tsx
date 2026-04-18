@@ -43,7 +43,7 @@ export default function PackageCheckout() {
 
   const handlePayWallet = async () => {
     if (!user) return;
-    if ((user.wallet_balance || 0) < draft.package_price) {
+    if ((user.walletBalance || user.wallet_balance || 0) < draft.package_price) {
       toast.error('Insufficient wallet balance');
       router.push('/wallet');
       return;
@@ -103,7 +103,7 @@ export default function PackageCheckout() {
               </div>
               <div className="text-left">
                 <p className="font-bold text-gray-900 text-sm">Pay from Wallet</p>
-                <p className="text-xs text-gray-500">Balance: ₹{user?.wallet_balance || 0}</p>
+                <p className="text-xs text-gray-500">Balance: ₹{user?.walletBalance || user?.wallet_balance || 0}</p>
               </div>
             </div>
             <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
