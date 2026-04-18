@@ -68,7 +68,7 @@ export default function PackagesPage() {
               Service Packages
             </h1>
         </div>
-        <button onClick={() => router.push('/profile')} className="text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg hover:bg-primary/20 transition-colors">
+        <button onClick={() => router.push('/packages/active')} className="text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg hover:bg-primary/20 transition-colors">
             Active Packages
         </button>
       </header>

@@ -7,7 +7,7 @@ import { ArrowLeft, Loader2, Package as PackageIcon, Check, Wallet } from 'lucid
 import { toast } from 'sonner';
 
 export default function PackageCheckout() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, refreshUser } = useAuth();
   const router = useRouter();
   const [draft, setDraft] = useState<any>(null);
   const [paying, setPaying] = useState(false);
@@ -24,6 +24,14 @@ export default function PackageCheckout() {
       router.replace('/packages');
     }
   }, [isLoading, user, router]);
+
+  useEffect(() => {
+     // Fetch the latest user profile details (including wallet_balance)
+     // so we don't display a stale cached value of 0.
+     if (user && refreshUser) {
+         refreshUser();
+     }
+  }, []);
 
   if (isLoading || !draft) {
     return (
