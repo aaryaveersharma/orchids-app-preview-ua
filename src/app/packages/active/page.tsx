@@ -97,7 +97,7 @@ export default function ActivePackagesPage() {
                         <ShieldCheck className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900 text-lg">{pkg.package_name || pkg.packages?.name || 'Service Package'}</h3>
+                        <h3 className="font-bold text-gray-900 text-lg">{pkg.packages?.name || 'Service Package'}</h3>
                         {pkg.created_at || pkg.purchased_at && (
                         <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                             <Clock className="w-3 h-3" /> Purchased: {new Date(pkg.created_at || pkg.purchased_at).toLocaleDateString()}

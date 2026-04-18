@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await supabase
       .from('user_packages')
-      .select('*')
+      .select('*, packages(*)')
       .eq('user_id', userId)
       .eq('status', 'active');
 

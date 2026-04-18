@@ -9,7 +9,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    if (authErr || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { userId, packageId } = body;
+    if (userId !== user.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     if (!userId || !packageId) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
@@ -32,7 +39,6 @@ export async function POST(req: NextRequest) {
     const { error: insertErr } = await supabase.from('user_packages').insert([{
       user_id: userId,
       package_id: packageId,
-      package_name: pkg.name,
       remaining_allowances: pkg.service_allowances,
       status: 'active'
     }]);

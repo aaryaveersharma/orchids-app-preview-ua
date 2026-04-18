@@ -51,9 +51,22 @@ export default function PackageCheckout() {
 
     setPaying(true);
     try {
+      // Supabase uses cookies/local storage for auth, but we need to send the token
+      // We can grab it from local storage
+      const tokenStr = localStorage.getItem(`sb-${process.env.NEXT_PUBLIC_SUPABASE_URL?.split('//')[1].split('.')[0]}-auth-token`);
+      let token = '';
+      if (tokenStr) {
+          try {
+              token = JSON.parse(tokenStr).access_token;
+          } catch (e) {}
+      }
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/packages/purchase`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ userId: user.id, packageId: draft.package_id, price: draft.package_price })
       });
       const data = await res.json();
