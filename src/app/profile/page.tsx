@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useNativeNotifications } from '@/hooks/useNativeNotifications';
-import { ArrowLeft, User, Mail, Phone, MapPin, LogOut, ChevronRight, HelpCircle, Info, KeyRound, Eye, EyeOff, X, Loader2, Wallet, Shield, Trash2, Lock, Bell } from 'lucide-react';
+import { ArrowLeft, Package, User, Mail, Phone, MapPin, LogOut, ChevronRight, HelpCircle, Info, KeyRound, Eye, EyeOff, X, Loader2, Wallet, Shield, Trash2, Lock, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import { toast } from 'sonner';
@@ -66,11 +66,16 @@ export default function ProfilePage() {
   const [resendTimer, setResendTimer] = useState(0);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+
+
     useEffect(() => {
         if (!isLoading && !user) {
       router.replace('/login');
         }
       }, [isLoading, user?.id]);
+
+
+
 
   useEffect(() => {
     if (resendTimer > 0) {
@@ -300,6 +305,9 @@ export default function ProfilePage() {
               <ChevronRight className="w-5 h-5 text-gray-400" />
             </button>
           </motion.div>
+
+
+
 
         {/* Manage Section */}
         <div className="mt-4">

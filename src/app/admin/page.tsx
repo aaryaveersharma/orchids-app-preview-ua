@@ -3,9 +3,10 @@
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { LogOut, Check, RefreshCw, ChevronDown, ChevronUp, User, Phone, Mail, MapPin, Car, FileText, Calendar, Loader2, Copy, Users, CalendarDays, KeyRound, Eye, EyeOff, X, ShieldCheck, IndianRupee, Wrench, AlertTriangle, Truck, Home, Search, Ticket, Plus, Trash2, ToggleLeft, ToggleRight, ChevronRight, Bell, Settings, Image as ImageIcon, QrCode, MessageSquare, Upload, Clock } from 'lucide-react';
+import { LogOut, Check, RefreshCw, ChevronDown, ChevronUp, User, Phone, Mail, MapPin, Car, FileText, Calendar, Loader2, Copy, Users, CalendarDays, KeyRound, Eye, EyeOff, X, ShieldCheck, IndianRupee, Wrench, AlertTriangle, Truck, Home, Search, Ticket, Plus, Trash2, ToggleLeft, ToggleRight, ChevronRight, Bell, Settings, Image as ImageIcon, QrCode, MessageSquare, Upload, Clock, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { services } from '@/lib/services-data';
 import { toast } from 'sonner';
 
 interface AdminBooking {
@@ -93,7 +94,7 @@ async function adminAction(body: any) {
 export default function AdminPanel() {
   const { user, isLoading, isAdmin, logout, updatePin } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'bookings' | 'users' | 'services' | 'coupons'>('bookings');
+  const [activeTab, setActiveTab] = useState<'bookings' | 'users' | 'services' | 'coupons' | 'packages' | 'crm'>('bookings');
   const [bookings, setBookings] = useState<AdminBooking[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [servicePrices, setServicePrices] = useState<ServicePrice[]>([]);
@@ -109,6 +110,9 @@ export default function AdminPanel() {
   const [showNewPin, setShowNewPin] = useState(false);
   const [pinLoading, setPinLoading] = useState(false);
   const [editingPrice, setEditingPrice] = useState<string | null>(null);
+  const [showCreateUserModal, setShowCreateUserModal] = useState(false);
+  const [createUserForm, setCreateUserForm] = useState({ name: '', phone: '', email: '', pin: '' });
+  const [creatingUser, setCreatingUser] = useState(false);
   const [priceForm, setPriceForm] = useState({ sedan: '', hatchback: '', suv: '', luxury: '' });
   const [quoteMode, setQuoteMode] = useState({ sedan: false, hatchback: false, suv: false, luxury: false });
   const [savingPrice, setSavingPrice] = useState(false);
@@ -120,6 +124,17 @@ export default function AdminPanel() {
   const [rescheduleLoading, setRescheduleLoading] = useState(false);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loadingCoupons, setLoadingCoupons] = useState(false);
+  const [packages, setPackages] = useState<any[]>([]);
+  const [loadingPackages, setLoadingPackages] = useState(false);
+  const [showPackageModal, setShowPackageModal] = useState(false);
+  const [editingPackage, setEditingPackage] = useState<any | null>(null);
+  const [packageForm, setPackageForm] = useState({ name: '', price: '', inclusions: '', service_allowances: {} });
+  const [crmLeads, setCrmLeads] = useState<any[]>([]);
+  const [loadingCrm, setLoadingCrm] = useState(false);
+  const [showCrmModal, setShowCrmModal] = useState(false);
+  const [editingLead, setEditingLead] = useState<any | null>(null);
+  const [crmForm, setCrmForm] = useState({ name: '', phone: '', email: '', last_service_date: '', next_appointment: '', notes: '', status: 'New' });
+  const [savingCrm, setSavingCrm] = useState(false);
   const [newCouponCode, setNewCouponCode] = useState('');
   const [newCouponDiscount, setNewCouponDiscount] = useState('');
   const [addingCoupon, setAddingCoupon] = useState(false);
@@ -242,6 +257,30 @@ export default function AdminPanel() {
     setLoadingCoupons(false);
   }, []);
 
+  const fetchPackages = useCallback(async () => {
+    setLoadingPackages(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/admin/packages`);
+      if (res.ok) {
+        const data = await res.json();
+        setPackages(data);
+      }
+    } catch { toast.error('Failed to load packages'); }
+    setLoadingPackages(false);
+  }, []);
+
+  const fetchCrmLeads = useCallback(async () => {
+    setLoadingCrm(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/admin/crm`);
+      if (res.ok) {
+        const data = await res.json();
+        setCrmLeads(data);
+      }
+    } catch { toast.error('Failed to load CRM leads'); }
+    setLoadingCrm(false);
+  }, []);
+
   useEffect(() => {
     if (isAdmin) fetchBookings();
   }, [isAdmin, fetchBookings]);
@@ -250,7 +289,9 @@ export default function AdminPanel() {
     if (isAdmin && activeTab === 'users') fetchProfiles();
     if (isAdmin && activeTab === 'services') fetchServicePrices();
     if (isAdmin && activeTab === 'coupons') fetchCoupons();
-  }, [isAdmin, activeTab, fetchProfiles, fetchServicePrices, fetchCoupons]);
+    if (isAdmin && activeTab === 'packages') fetchPackages();
+    if (isAdmin && activeTab === 'crm') fetchCrmLeads();
+  }, [isAdmin, activeTab, fetchProfiles, fetchServicePrices, fetchCoupons, fetchPackages, fetchCrmLeads]);
 
   const updateBookingStatus = async (id: string, status: string) => {
     setConfirmingId(id);
@@ -477,7 +518,9 @@ export default function AdminPanel() {
               if (activeTab === 'bookings') fetchBookings();
               else if (activeTab === 'users') fetchProfiles();
               else if (activeTab === 'coupons') fetchCoupons();
-              else fetchServicePrices();
+              else if (activeTab === 'packages') fetchPackages();
+              else if (activeTab === 'services') fetchServicePrices();
+              else if (activeTab === 'crm') fetchCrmLeads();
             }} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
               <RefreshCw className="w-5 h-5" />
             </button>
@@ -488,16 +531,18 @@ export default function AdminPanel() {
         </div>
       </header>
 
-      <div className="flex border-b border-gray-200 bg-white sticky top-[72px] z-10">
-        {(['bookings', 'users', 'services', 'coupons'] as const).map(tab => (
+      <div className="flex overflow-x-auto border-b border-gray-200 bg-white sticky top-[72px] z-10 scrollbar-hide">
+        {(['bookings', 'users', 'services', 'packages', 'crm', 'coupons'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-semibold transition-colors ${activeTab === tab ? 'text-primary border-b-2 border-primary' : 'text-gray-500'}`}
+            className={`min-w-[80px] flex items-center justify-center gap-1.5 py-3 px-2 text-xs font-semibold transition-colors ${activeTab === tab ? 'text-primary border-b-2 border-primary' : 'text-gray-500'}`}
           >
             {tab === 'bookings' && <CalendarDays className="w-4 h-4" />}
             {tab === 'users' && <Users className="w-4 h-4" />}
             {tab === 'services' && <Wrench className="w-4 h-4" />}
+            {tab === 'packages' && <Package className="w-4 h-4" />}
+            {tab === 'crm' && <Phone className="w-4 h-4" />}
             {tab === 'coupons' && <Ticket className="w-4 h-4" />}
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
@@ -696,6 +741,15 @@ export default function AdminPanel() {
         <div className="px-4 py-4 pb-8 space-y-3">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm text-gray-500">{profiles.length} registered users</p>
+            <button
+              onClick={() => {
+                setCreateUserForm({ name: '', phone: '', email: '', pin: '' });
+                setShowCreateUserModal(true);
+              }}
+              className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold flex items-center gap-1"
+            >
+              <Plus className="w-3.5 h-3.5" /> Add User
+            </button>
           </div>
           <div className="relative mb-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -759,6 +813,151 @@ export default function AdminPanel() {
                   </div>
                 </div>
               </motion.div>
+            ))
+          )}
+        </div>
+      )}
+
+      {activeTab === 'crm' && (
+        <div className="px-4 py-4 pb-8 space-y-4">
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-sm text-gray-500">{crmLeads.length} leads</p>
+            <button
+              onClick={() => {
+                setEditingLead(null);
+                setCrmForm({ name: '', phone: '', email: '', last_service_date: '', next_appointment: '', notes: '', status: 'New' });
+                setShowCrmModal(true);
+              }}
+              className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold flex items-center gap-1"
+            >
+              <Plus className="w-3.5 h-3.5" /> Add Lead
+            </button>
+          </div>
+
+          {loadingCrm ? (
+            <div className="flex items-center justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          ) : crmLeads.length === 0 ? (
+            <div className="text-center py-16"><p className="text-gray-500 text-sm">No leads found</p></div>
+          ) : (
+            crmLeads.map((lead) => (
+              <div key={lead.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-sm">{lead.profiles?.full_name || lead.name || 'Unknown'}</h3>
+                    <p className="text-xs text-gray-500 flex items-center gap-1"><Phone className="w-3 h-3" /> {lead.profiles?.phone || lead.phone || 'No phone'}</p>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${lead.status === 'New' ? 'bg-blue-100 text-blue-700' : lead.status === 'Follow Up' ? 'bg-yellow-100 text-yellow-700' : lead.status === 'Converted' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
+                    {lead.status}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="bg-gray-50 p-2 rounded-lg">
+                    <p className="text-[10px] text-gray-500 uppercase font-semibold">Last Service</p>
+                    <p className="text-xs font-medium text-gray-900">{lead.last_service_date ? new Date(lead.last_service_date).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div className="bg-gray-50 p-2 rounded-lg">
+                    <p className="text-[10px] text-gray-500 uppercase font-semibold">Next Appt</p>
+                    <p className="text-xs font-medium text-gray-900">{lead.next_appointment ? new Date(lead.next_appointment).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                </div>
+
+                {lead.notes && (
+                  <p className="text-xs text-gray-600 bg-amber-50 p-2 rounded-lg mb-3">
+                    <FileText className="w-3 h-3 inline mr-1 text-amber-500" />
+                    {lead.notes}
+                  </p>
+                )}
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setEditingLead(lead);
+                      setCrmForm({
+                        name: lead.name || '', phone: lead.phone || '', email: lead.email || '',
+                        last_service_date: lead.last_service_date ? new Date(lead.last_service_date).toISOString().split('T')[0] : '',
+                        next_appointment: lead.next_appointment ? new Date(lead.next_appointment).toISOString().split('T')[0] : '',
+                        notes: lead.notes || '', status: lead.status || 'New'
+                      });
+                      setShowCrmModal(true);
+                    }}
+                    className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold hover:bg-gray-200"
+                  >
+                    Edit Lead
+                  </button>
+                  <a href={`tel:${lead.profiles?.phone || lead.phone}`} className="flex-1 py-2 bg-green-100 text-green-700 rounded-xl text-xs font-bold hover:bg-green-200 text-center flex items-center justify-center gap-1">
+                    <Phone className="w-3.5 h-3.5" /> Call
+                  </a>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {activeTab === 'packages' && (
+        <div className="px-4 py-4 pb-8 space-y-4">
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-sm text-gray-500">{packages.length} packages</p>
+            <button
+              onClick={() => {
+                setEditingPackage(null);
+                setPackageForm({ name: '', price: '', inclusions: '', service_allowances: {} });
+                setShowPackageModal(true);
+              }}
+              className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold flex items-center gap-1"
+            >
+              <Plus className="w-3.5 h-3.5" /> Add Package
+            </button>
+          </div>
+
+          {loadingPackages ? (
+            <div className="flex items-center justify-center py-16"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          ) : packages.length === 0 ? (
+            <div className="text-center py-16"><p className="text-gray-500 text-sm">No packages found</p></div>
+          ) : (
+            packages.map((pkg) => (
+              <div key={pkg.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-4 flex items-center justify-between border-b border-gray-50">
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-sm">{pkg.name}</h3>
+                    <p className="text-xs font-bold text-primary">₹{pkg.price}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingPackage(pkg);
+                        setPackageForm({ name: pkg.name, price: String(pkg.price), inclusions: (pkg.inclusions || []).join('\n'), service_allowances: pkg.service_allowances || {} });
+                        setShowPackageModal(true);
+                      }}
+                      className="p-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
+                    >
+                      <Wrench className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (!confirm('Delete package?')) return;
+                        try {
+                          await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/admin/packages?id=${pkg.id}`, { method: 'DELETE' });
+                          toast.success('Package deleted');
+                          fetchPackages();
+                        } catch { toast.error('Failed to delete'); }
+                      }}
+                      className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50/50">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase mb-2">Inclusions</p>
+                  <ul className="space-y-1">
+                    {(pkg.inclusions || []).map((inc: string, i: number) => (
+                      <li key={i} className="text-xs text-gray-700 flex gap-2"><Check className="w-3.5 h-3.5 text-green-500" /> {inc}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             ))
           )}
         </div>
@@ -1113,6 +1312,204 @@ export default function AdminPanel() {
       </AnimatePresence>
 
       <AnimatePresence>
+        {showCreateUserModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex flex-col justify-end sm:items-center sm:justify-center" onClick={() => setShowCreateUserModal(false)}>
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="bg-white rounded-t-3xl sm:rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900">Create New User</h3>
+                <button onClick={() => setShowCreateUserModal(false)} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"><X className="w-5 h-5 text-gray-600" /></button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Full Name</label>
+                  <input type="text" value={createUserForm.name} onChange={(e) => setCreateUserForm({ ...createUserForm, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" placeholder="John Doe" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Phone Number</label>
+                  <input type="tel" maxLength={10} value={createUserForm.phone} onChange={(e) => setCreateUserForm({ ...createUserForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" placeholder="10-digit number" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Email</label>
+                  <input type="email" value={createUserForm.email} onChange={(e) => setCreateUserForm({ ...createUserForm, email: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" placeholder="user@example.com" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">PIN</label>
+                  <input type="text" maxLength={4} value={createUserForm.pin} onChange={(e) => setCreateUserForm({ ...createUserForm, pin: e.target.value.replace(/\D/g, '').slice(0, 4) })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" placeholder="4-digit PIN" />
+                </div>
+
+                <button
+                  onClick={async () => {
+                    const { name, phone, email, pin } = createUserForm;
+                    if (!name || phone.length !== 10 || !email || pin.length !== 4) {
+                      return toast.error('Please fill all fields correctly');
+                    }
+                    setCreatingUser(true);
+                    try {
+                      await adminAction({
+                        action: 'create-user',
+                        full_name: name,
+                        phone,
+                        email,
+                        pin
+                      });
+                      toast.success('User created successfully');
+                      setShowCreateUserModal(false);
+                      fetchProfiles();
+                    } catch (e: any) {
+                      toast.error(e.message || 'Failed to create user');
+                    }
+                    setCreatingUser(false);
+                  }}
+                  disabled={creatingUser}
+                  className="w-full py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 mt-2"
+                >
+                  {creatingUser && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {creatingUser ? 'Creating...' : 'Create User'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {showCrmModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex flex-col justify-end sm:items-center sm:justify-center" onClick={() => setShowCrmModal(false)}>
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="bg-white rounded-t-3xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900">{editingLead ? 'Edit Lead' : 'Add Lead'}</h3>
+                <button onClick={() => setShowCrmModal(false)} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"><X className="w-5 h-5 text-gray-600" /></button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Name</label>
+                    <input type="text" value={crmForm.name} onChange={(e) => setCrmForm({ ...crmForm, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Phone</label>
+                    <input type="tel" maxLength={10} value={crmForm.phone} onChange={(e) => setCrmForm({ ...crmForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Status</label>
+                  <select value={crmForm.status} onChange={(e) => setCrmForm({ ...crmForm, status: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary appearance-none">
+                    <option value="New">New</option>
+                    <option value="Follow Up">Follow Up</option>
+                    <option value="Converted">Converted</option>
+                    <option value="Dead">Dead</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Last Service</label>
+                    <input type="date" value={crmForm.last_service_date} onChange={(e) => setCrmForm({ ...crmForm, last_service_date: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Next Appt</label>
+                    <input type="date" value={crmForm.next_appointment} onChange={(e) => setCrmForm({ ...crmForm, next_appointment: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Notes / Follow-up Details</label>
+                  <textarea value={crmForm.notes} onChange={(e) => setCrmForm({ ...crmForm, notes: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary min-h-[100px] resize-none" placeholder="Called customer, requested callback tomorrow..." />
+                </div>
+
+                <button
+                  onClick={async () => {
+                    if (!crmForm.phone && !crmForm.name) return toast.error('Name or Phone required');
+                    const body = {
+                      name: crmForm.name,
+                      phone: crmForm.phone,
+                      email: crmForm.email,
+                      last_service_date: crmForm.last_service_date ? new Date(crmForm.last_service_date).toISOString() : null,
+                      next_appointment: crmForm.next_appointment ? new Date(crmForm.next_appointment).toISOString() : null,
+                      notes: crmForm.notes,
+                      status: crmForm.status
+                    };
+
+                    setSavingCrm(true);
+                    try {
+                      if (editingLead) {
+                        await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/admin/crm`, { method: 'PUT', body: JSON.stringify({ id: editingLead.id, ...body }) });
+                        toast.success('Lead updated');
+                      } else {
+                        await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/admin/crm`, { method: 'POST', body: JSON.stringify(body) });
+                        toast.success('Lead created');
+                      }
+                      setShowCrmModal(false);
+                      fetchCrmLeads();
+                    } catch { toast.error('Failed to save lead'); }
+                    setSavingCrm(false);
+                  }}
+                  disabled={savingCrm}
+                  className="w-full py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {savingCrm && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {savingCrm ? 'Saving...' : (editingLead ? 'Update Lead' : 'Save Lead')}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {showPackageModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex flex-col justify-end sm:items-center sm:justify-center" onClick={() => setShowPackageModal(false)}>
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="bg-white rounded-t-3xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900">{editingPackage ? 'Edit Package' : 'Add Package'}</h3>
+                <button onClick={() => setShowPackageModal(false)} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"><X className="w-5 h-5 text-gray-600" /></button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Package Name</label>
+                  <input type="text" value={packageForm.name} onChange={(e) => setPackageForm({ ...packageForm, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" placeholder="e.g. Premium Wash" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Price (₹)</label>
+                  <input type="number" value={packageForm.price} onChange={(e) => setPackageForm({ ...packageForm, price: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" placeholder="e.g. 1999" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Inclusions (One per line)</label>
+                  <textarea value={packageForm.inclusions} onChange={(e) => setPackageForm({ ...packageForm, inclusions: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary min-h-[120px] resize-none" placeholder="Deep vacuum&#10;Foam wash&#10;Tire polish" />
+                </div>
+
+                <button
+                  onClick={async () => {
+                    if (!packageForm.name || !packageForm.price) return toast.error('Name and price required');
+                    const body = {
+                      name: packageForm.name,
+                      price: Number(packageForm.price),
+                      inclusions: packageForm.inclusions.split('\n').map(s => s.trim()).filter(s => s),
+                      service_allowances: packageForm.service_allowances,
+                      active: true
+                    };
+
+                    try {
+                      if (editingPackage) {
+                        await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/admin/packages`, { method: 'PUT', body: JSON.stringify({ id: editingPackage.id, ...body }) });
+                        toast.success('Package updated');
+                      } else {
+                        await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/admin/packages`, { method: 'POST', body: JSON.stringify(body) });
+                        toast.success('Package created');
+                      }
+                      setShowPackageModal(false);
+                      fetchPackages();
+                    } catch { toast.error('Failed to save package'); }
+                  }}
+                  className="w-full py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-colors"
+                >
+                  {editingPackage ? 'Update Package' : 'Create Package'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
         {showSlotsModal && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto" onClick={() => setShowSlotsModal(false)}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-2xl p-6 w-full max-w-md my-8" onClick={(e) => e.stopPropagation()}>
