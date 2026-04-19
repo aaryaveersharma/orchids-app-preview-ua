@@ -128,7 +128,7 @@ export default function AdminPanel() {
   const [loadingPackages, setLoadingPackages] = useState(false);
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState<any | null>(null);
-  const [packageForm, setPackageForm] = useState<{name: string, price: string, service_allowances: Record<string, number>}>({ name: '', price: '', service_allowances: {} });
+  const [packageForm, setPackageForm] = useState({ name: '', price: '', inclusions: '', service_allowances: {} });
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [loadingCrm, setLoadingCrm] = useState(false);
   const [showCrmModal, setShowCrmModal] = useState(false);
@@ -902,7 +902,7 @@ export default function AdminPanel() {
             <button
               onClick={() => {
                 setEditingPackage(null);
-                setPackageForm({ name: '', price: '', service_allowances: {} });
+                setPackageForm({ name: '', price: '', inclusions: '', service_allowances: {} });
                 setShowPackageModal(true);
               }}
               className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold flex items-center gap-1"
@@ -927,7 +927,7 @@ export default function AdminPanel() {
                     <button
                       onClick={() => {
                         setEditingPackage(pkg);
-                        setPackageForm({ name: pkg.name, price: String(pkg.price), service_allowances: pkg.service_allowances || {} });
+                        setPackageForm({ name: pkg.name, price: String(pkg.price), inclusions: (pkg.inclusions || []).join('\n'), service_allowances: pkg.service_allowances || {} });
                         setShowPackageModal(true);
                       }}
                       className="p-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
@@ -1474,52 +1474,17 @@ export default function AdminPanel() {
                   <input type="number" value={packageForm.price} onChange={(e) => setPackageForm({ ...packageForm, price: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary" placeholder="e.g. 1999" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase mb-3 block">Included Services & Quantities</label>
-                  <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                     {appServices.map(service => (
-                        <div key={service.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-100">
-                           <div className="flex-1">
-                               <p className="text-sm font-bold text-gray-900">{service.name}</p>
-                           </div>
-                           <div className="flex items-center gap-3">
-                               <button
-                                   onClick={() => setPackageForm(prev => ({
-                                       ...prev,
-                                       service_allowances: {
-                                           ...prev.service_allowances,
-                                           [service.name]: Math.max(0, (prev.service_allowances[service.name] || 0) - 1)
-                                       }
-                                   }))}
-                                   className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-100"
-                               >-</button>
-                               <span className="w-4 text-center font-bold text-gray-900">{packageForm.service_allowances[service.name] || 0}</span>
-                               <button
-                                   onClick={() => setPackageForm(prev => ({
-                                       ...prev,
-                                       service_allowances: {
-                                           ...prev.service_allowances,
-                                           [service.name]: (prev.service_allowances[service.name] || 0) + 1
-                                       }
-                                   }))}
-                                   className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90"
-                               >+</button>
-                           </div>
-                        </div>
-                     ))}
-                  </div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">Inclusions (One per line)</label>
+                  <textarea value={packageForm.inclusions} onChange={(e) => setPackageForm({ ...packageForm, inclusions: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-primary min-h-[120px] resize-none" placeholder="Deep vacuum&#10;Foam wash&#10;Tire polish" />
                 </div>
 
                 <button
                   onClick={async () => {
                     if (!packageForm.name || !packageForm.price) return toast.error('Name and price required');
-                    const inclusions = Object.entries(packageForm.service_allowances)
-                        .filter(([_, count]) => count > 0)
-                        .map(([serviceName, count]) => `${count}x ${serviceName}`);
-
                     const body = {
                       name: packageForm.name,
                       price: Number(packageForm.price),
-                      inclusions,
+                      inclusions: packageForm.inclusions.split('\n').map(s => s.trim()).filter(s => s),
                       service_allowances: packageForm.service_allowances,
                       active: true
                     };

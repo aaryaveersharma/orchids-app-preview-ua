@@ -112,18 +112,17 @@ export default function ActivePackagesPage() {
 
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <h4 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-                      <Car className="w-4 h-4" /> Remaining Services
+                      <Car className="w-4 h-4" /> Inclusions
                   </h4>
                   <ul className="space-y-2">
-                    {pkg.remaining_allowances || pkg.service_allowances && Object.entries(pkg.remaining_allowances || pkg.service_allowances).map(([service, count]: [string, any]) => (
-                      <li key={service} className="flex justify-between items-center bg-gray-50 px-3 py-2 rounded-lg">
-                        <span className="text-sm font-medium text-gray-700">{service}</span>
-                        <span className="font-bold text-sm bg-white px-2 py-0.5 rounded shadow-sm border border-gray-100">{count as number} left</span>
+                    {pkg.packages?.inclusions?.map((inc: string, i: number) => (
+                      <li key={i} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+                        <span className="text-sm font-medium text-gray-700">{inc}</span>
                       </li>
                     ))}
                   </ul>
-                  {(!pkg.remaining_allowances || pkg.service_allowances || Object.keys(pkg.remaining_allowances || pkg.service_allowances).length === 0) && (
-                      <p className="text-sm text-gray-500 italic">No specific service allowances defined.</p>
+                  {(!pkg.packages?.inclusions || pkg.packages.inclusions.length === 0) && (
+                      <p className="text-sm text-gray-500 italic">No specific inclusions defined.</p>
                   )}
                 </div>
               </motion.div>
