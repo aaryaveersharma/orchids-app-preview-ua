@@ -22,6 +22,8 @@ export default function BookingSummaryPage() {
   const router = useRouter();
 
   const [summaryData, setSummaryData] = useState<any>(null);
+  const [activePackages, setActivePackages] = useState<any[]>([]);
+  const [appliedPackage, setAppliedPackage] = useState<any>(null);
   const [editingDetails, setEditingDetails] = useState(false);
   const [editName, setEditName] = useState('');
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -224,7 +226,7 @@ export default function BookingSummaryPage() {
             paymentStatus: 'paid',
             couponCode: appliedCoupon?.code || null,
             discountAmount,
-            packageId: summaryData.package_id || null,
+            packageId: appliedPackage?.id || summaryData.package_id || null,
           });
 
           if (result.success) {
